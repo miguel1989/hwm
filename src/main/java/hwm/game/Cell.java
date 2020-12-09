@@ -15,6 +15,14 @@ public class Cell {
 		this.y = y;
 	}
 
+	public void addCreature(Creature creature) {
+		this.creatures.add(creature);
+	}
+
+	public boolean hasAliveCreature() {
+		return this.creatures.stream().anyMatch(Creature::isAlive);
+	}
+
 	public List<Creature> creatures() {
 		return creatures;
 	}
