@@ -1,4 +1,4 @@
-package hwm.atb;
+package hwm.game;
 
 
 import hwm.creatures.Bowman;
