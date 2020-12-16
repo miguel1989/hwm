@@ -5,4 +5,5 @@ public enum Faction {
 	Necro,
 	Elf,
 	DarkElf
+	//todo
 }
