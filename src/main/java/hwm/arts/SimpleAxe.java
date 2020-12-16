@@ -12,12 +12,15 @@ public class SimpleAxe {
 
 	void create() {
 		artifact.setName("Simple Axe");
-		artifact.setAttack(4);
-		artifact.setDefence(1);
+		artifact.initDurability(50);
+
+		artifact.getBaseParams().setAttack(4);
+		artifact.getBaseParams().setDefence(1);
+		artifact.getBaseParams().setInitiative(1);
+		artifact.getBaseParams().setLuck(1);
+
 		artifact.setForLevel(1);
-		artifact.setInitiative(1);
 		artifact.setType(ArtifactType.WEAPON_LEFT_HAND);
-		artifact.setLuck(1);
 	}
 
 	public Artifact artifact() {

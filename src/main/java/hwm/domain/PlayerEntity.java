@@ -1,5 +1,6 @@
 package hwm.domain;
 
+import com.google.common.collect.ImmutableList;
 import hwm.game.enums.Faction;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,28 +27,8 @@ public class PlayerEntity extends BaseEntity {
 
 	@Getter
 	@Setter
-	@Column(name = "attack")
-	int attack;
-
-	@Getter
-	@Setter
-	@Column(name = "defence")
-	int defence;
-
-	@Getter
-	@Setter
-	@Column(name = "initiative")
-	int initiative;
-
-	@Getter
-	@Setter
-	@Column(name = "luck")
-	int luck;
-
-	@Getter
-	@Setter
-	@Column(name = "morale")
-	int morale;
+	@Embedded
+	BaseParams baseParams = new BaseParams();
 
 	@Getter
 	@Setter
@@ -68,8 +49,12 @@ public class PlayerEntity extends BaseEntity {
 		this.name = name;
 	}
 
-	public int allAttack() {
-		int artifactAttack = this.artifacts.stream().map(art -> art.attack).reduce(0, Integer::sum);
-		return this.attack + artifactAttack;
+	public Collection<Artifact> artifacts() {
+		return ImmutableList.copyOf(artifacts);
 	}
+
+//	public int allAttack() {
+//		int artifactAttack = this.artifacts.stream().map(art -> art.attack).reduce(0, Integer::sum);
+//		return this.attack + artifactAttack;
+//	}
 }

@@ -31,11 +31,11 @@ public class PlayerEntityDaoTest {
 	}
 
 	@Test
-	public void registerElf() {
+	public void simpleCreate() {
 		PlayerEntity playerEntity = new PlayerEntity("myLittleElf");
 		playerEntity.setFaction(Faction.Elf);
-		playerEntity.setInitiative(3);
-		playerEntity.setMorale(1);
+		playerEntity.getBaseParams().setAttack(1);
+		playerEntity.getBaseParams().setDefence(2);
 		playerEntity.setLevel(1);
 
 		playerEntityDao.save(playerEntity);
