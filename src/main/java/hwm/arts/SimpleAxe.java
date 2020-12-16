@@ -1,10 +1,10 @@
 package hwm.arts;
 
-import hwm.domain.Artifact;
+import hwm.domain.ArtifactEntity;
 import hwm.game.enums.ArtifactType;
 
 public class SimpleAxe {
-	private final Artifact artifact = new Artifact();
+	private final ArtifactEntity artifact = new ArtifactEntity();
 
 	public SimpleAxe() {
 		create();
@@ -23,7 +23,7 @@ public class SimpleAxe {
 		artifact.setType(ArtifactType.WEAPON_LEFT_HAND);
 	}
 
-	public Artifact artifact() {
+	public ArtifactEntity artifact() {
 		return artifact;
 	}
 }

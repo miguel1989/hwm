@@ -1,11 +1,11 @@
 package hwm.dao;
 
-import hwm.domain.Artifact;
+import hwm.domain.ArtifactEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface ArtifactDao extends PagingAndSortingRepository<Artifact, UUID> {
+public interface ArtifactEntityDao extends PagingAndSortingRepository<ArtifactEntity, UUID> {
 }

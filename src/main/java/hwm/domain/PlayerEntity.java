@@ -41,7 +41,7 @@ public class PlayerEntity extends BaseEntity {
 
 	//todo artifacts
 	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	final Collection<Artifact> artifacts = new LinkedList<>();
+	final Collection<ArtifactEntity> artifacts = new LinkedList<>();
 
 	//todo perks
 
@@ -49,7 +49,7 @@ public class PlayerEntity extends BaseEntity {
 		this.name = name;
 	}
 
-	public Collection<Artifact> artifacts() {
+	public Collection<ArtifactEntity> artifacts() {
 		return ImmutableList.copyOf(artifacts);
 	}
 

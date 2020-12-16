@@ -1,6 +1,6 @@
 package hwm.dao;
 
-import hwm.domain.Artifact;
+import hwm.domain.ArtifactEntity;
 import hwm.arts.SimpleAxe;
 import hwm.game.enums.ArtifactType;
 import org.junit.jupiter.api.AfterEach;
@@ -16,32 +16,32 @@ import org.springframework.data.domain.Sort;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class ArtifactDaoTest {
+public class ArtifactEntityDaoTest {
 
 	@Autowired
-	private ArtifactDao artifactDao;
+	private ArtifactEntityDao artifactEntityDao;
 
 	@BeforeEach
 	public void setup() {
-		artifactDao.deleteAll();
+		artifactEntityDao.deleteAll();
 	}
 
 	@AfterEach
 	public void tearDown() {
-		artifactDao.deleteAll();
+		artifactEntityDao.deleteAll();
 	}
 
 	@Test
 	public void simpleAxe_init_without_player() {
-		artifactDao.save(new SimpleAxe().artifact());
+		artifactEntityDao.save(new SimpleAxe().artifact());
 
 		Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
-		Page<Artifact> page = artifactDao.findAll(pageable);
+		Page<ArtifactEntity> page = artifactEntityDao.findAll(pageable);
 		assertEquals(1L, page.getTotalElements());
 		assertEquals(1, page.getContent().size());
 		assertEquals(1, page.getTotalPages());
 
-		Artifact art = page.getContent().get(0);
+		ArtifactEntity art = page.getContent().get(0);
 
 		assertNotNull(art.id());
 		assertNull(art.getPlayerEntity());
@@ -65,8 +65,8 @@ public class ArtifactDaoTest {
 
 	@Test
 	public void simpleAxe_without_player_putOn_takeOff() {
-		Artifact art = new SimpleAxe().artifact();
-		artifactDao.save(art);
+		ArtifactEntity art = new SimpleAxe().artifact();
+		artifactEntityDao.save(art);
 
 		assertNotNull(art.id());
 		assertNull(art.getPlayerEntity());

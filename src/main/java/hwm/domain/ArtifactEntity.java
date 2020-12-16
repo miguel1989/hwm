@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "artifacts")
 @NoArgsConstructor
-public class Artifact extends BaseEntity {
+public class ArtifactEntity extends BaseEntity {
 	@Getter
 	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
