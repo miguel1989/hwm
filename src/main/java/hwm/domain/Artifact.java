@@ -100,6 +100,9 @@ public class Artifact extends BaseEntity {
 	}
 
 	public void decreaseDurability() {
+		if (!this.isOn) {
+			return;
+		}
 		if (isBroken()) {
 			return;
 		}

@@ -12,7 +12,7 @@ public class SimpleAxe {
 
 	void create() {
 		artifact.setName("Simple Axe");
-		artifact.initDurability(50);
+		artifact.initDurability(3);
 
 		artifact.getBaseParams().setAttack(4);
 		artifact.getBaseParams().setDefence(1);

@@ -47,6 +47,8 @@ public class ArtifactDaoTest {
 		assertNull(art.getPlayerEntity());
 		assertEquals("Simple Axe", art.getName());
 		assertEquals(1, art.getForLevel());
+		assertEquals(3, art.getDurabilityTotal());
+		assertEquals(3, art.getDurabilityCurrent());
 		assertFalse(art.isOn());
 		assertFalse(art.isBroken());
 
@@ -59,5 +61,43 @@ public class ArtifactDaoTest {
 		assertEquals(0, art.getKnowledge());
 
 		assertEquals(ArtifactType.WEAPON_LEFT_HAND, art.getType());
+	}
+
+	@Test
+	public void simpleAxe_without_player_putOn_takeOff() {
+		Artifact art = new SimpleAxe().artifact();
+		artifactDao.save(art);
+
+		assertNotNull(art.id());
+		assertNull(art.getPlayerEntity());
+		assertEquals("Simple Axe", art.getName());
+		assertEquals(3, art.getDurabilityTotal());
+		assertEquals(3, art.getDurabilityCurrent());
+		assertFalse(art.isOn());
+		assertFalse(art.isBroken());
+
+		//decreaseDurability for art that is not on -> nothing should happen
+		art.decreaseDurability();
+		assertEquals(3, art.getDurabilityCurrent());
+
+		//Put on the artifact and decrease
+		art.putOn();
+		assertTrue(art.isOn());
+		assertFalse(art.isBroken());
+
+		art.decreaseDurability();
+		assertEquals(2, art.getDurabilityCurrent());
+		assertTrue(art.isOn());
+		assertFalse(art.isBroken());
+
+		art.decreaseDurability();
+		assertEquals(1, art.getDurabilityCurrent());
+		assertTrue(art.isOn());
+		assertFalse(art.isBroken());
+
+		art.decreaseDurability();
+		assertEquals(0, art.getDurabilityCurrent());
+		assertFalse(art.isOn());
+		assertTrue(art.isBroken());
 	}
 }
