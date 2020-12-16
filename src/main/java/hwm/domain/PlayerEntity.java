@@ -72,11 +72,11 @@ public class PlayerEntity extends BaseEntity {
 	public boolean putOnArtifact(String artId) {
 		Optional<ArtifactEntity> optionalArt = findArtifactById(artId);
 
-		if (optionalArt.isPresent()) {
-			if (isArtifactSlotFree(optionalArt.get().getType())) {
-				optionalArt.get().putOn();
-				return optionalArt.get().isOn();
-			}
+		if (optionalArt.isPresent()
+				&& !optionalArt.get().isOn() //artifact is not yet on
+				&& isArtifactSlotFree(optionalArt.get().getType())) {
+			optionalArt.get().putOn();
+			return optionalArt.get().isOn();
 		}
 
 		return false;
@@ -85,7 +85,7 @@ public class PlayerEntity extends BaseEntity {
 	public boolean takeOffArtifact(String artId) {
 		Optional<ArtifactEntity> optionalArt = findArtifactById(artId);
 
-		if (optionalArt.isPresent()) {
+		if (optionalArt.isPresent() && optionalArt.get().isOn()) {
 			optionalArt.get().takeOff();
 			return true;
 		}
@@ -106,7 +106,7 @@ public class PlayerEntity extends BaseEntity {
 			long count = this.artifacts.stream().filter(it -> it.isOn() && it.getType().equals(artifactType)).count();
 			return count < 2; //we can have only 2 earrings
 		}
-		return this.artifacts.stream().anyMatch(it -> it.isOn() && it.getType().equals(artifactType));
+		return this.artifacts.stream().noneMatch(it -> it.isOn() && it.getType().equals(artifactType));
 	}
 
 //	public int allAttack() {

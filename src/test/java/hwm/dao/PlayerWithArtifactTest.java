@@ -25,6 +25,8 @@ public class PlayerWithArtifactTest {
 	@Autowired
 	private ArtifactEntityDao artifactEntityDao;
 
+	Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
+
 	@BeforeEach
 	public void setup() {
 		playerEntityDao.deleteAll();
@@ -38,7 +40,7 @@ public class PlayerWithArtifactTest {
 	}
 
 	@Test
-	public void addAndRemoveArtifactForPlayer() {
+	public void addAndRemoveAxesForPlayer() {
 		ArtifactEntity axe1 = new SimpleAxe().artifact();
 		ArtifactEntity axe2 = new SimpleAxe().artifact();
 		artifactEntityDao.save(axe1);
@@ -50,7 +52,6 @@ public class PlayerWithArtifactTest {
 		playerEntityDao.save(player1);
 
 
-		Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
 		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
 		assertEquals(1, page.getContent().size());
 		player1 = page.getContent().get(0);
@@ -76,6 +77,50 @@ public class PlayerWithArtifactTest {
 		ArtifactEntity attachedAxe = artifactPage.getContent().stream().filter(it -> it.id().equals(axe2.id())).findFirst().get();
 		assertNotNull(attachedAxe.getPlayerEntity());
 		assertNull(attachedAxe.getOwnedBy());
+	}
+
+	@Test
+	public void putOnAndTakeOffAxes() {
+		ArtifactEntity axe1 = new SimpleAxe().artifact();
+		ArtifactEntity axe2 = new SimpleAxe().artifact();
+		artifactEntityDao.save(axe1);
+		artifactEntityDao.save(axe2);
+
+		PlayerEntity player1 = createSimplePlayer();
+		player1.addArtifact(axe1);
+		player1.addArtifact(axe2);
+		playerEntityDao.save(player1);
+
+		boolean putOnResult = player1.putOnArtifact(axe1.id().toString());
+		assertTrue(putOnResult);
+		putOnResult = player1.putOnArtifact(axe1.id().toString());
+		assertFalse(putOnResult, "can not putOn the same axe");
+		putOnResult = player1.putOnArtifact(axe2.id().toString());
+		assertFalse(putOnResult, "can not putOn any other weapon there");
+		playerEntityDao.save(player1);
+
+
+		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(2, player1.artifacts().size());
+		assertEquals(1, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
+
+
+		boolean takeOffResult = player1.takeOffArtifact(axe2.id().toString());
+		assertFalse(takeOffResult, "can not takeOff axe that is not on");
+		takeOffResult = player1.takeOffArtifact(axe1.id().toString());
+		assertTrue(takeOffResult);
+		takeOffResult = player1.takeOffArtifact(axe1.id().toString());
+		assertFalse(takeOffResult, "can not takeOff axe that is not on");
+		playerEntityDao.save(player1);
+
+
+		page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(2, player1.artifacts().size());
+		assertEquals(0, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
 	}
 
 	private PlayerEntity createSimplePlayer() {
