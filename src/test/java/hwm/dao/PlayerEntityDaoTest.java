@@ -19,19 +19,15 @@ public class PlayerEntityDaoTest {
 
 	@Autowired
 	private PlayerEntityDao playerEntityDao;
-	@Autowired
-	private ArtifactEntityDao artifactEntityDao;
 
 	@BeforeEach
 	public void setup() {
 		playerEntityDao.deleteAll();
-		artifactEntityDao.deleteAll();
 	}
 
 	@AfterEach
 	public void tearDown() {
 		playerEntityDao.deleteAll();
-		artifactEntityDao.deleteAll();
 	}
 
 	@Test

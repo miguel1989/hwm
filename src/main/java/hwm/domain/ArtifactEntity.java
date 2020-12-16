@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "artifacts")
@@ -19,7 +20,12 @@ public class ArtifactEntity extends BaseEntity {
 
 	@Getter
 	@Setter
-	@Column(name = "name", unique = true)
+	@Column(name = "owned_by")
+	UUID ownedBy;
+
+	@Getter
+	@Setter
+	@Column(name = "name")
 	String name;
 
 	@Getter
@@ -114,5 +120,13 @@ public class ArtifactEntity extends BaseEntity {
 
 	public boolean isBroken() {
 		return this.durabilityCurrent == 0;
+	}
+
+	public void detachFromPlayer() {
+		if (this.playerEntity == null) {
+			return;
+		}
+		this.ownedBy = this.playerEntity.id;
+		this.playerEntity = null;
 	}
 }
