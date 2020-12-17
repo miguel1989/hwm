@@ -1,6 +1,7 @@
 package hwm.dao;
 
 import hwm.arts.SimpleAxe;
+import hwm.arts.SimpleEarRing;
 import hwm.domain.ArtifactEntity;
 import hwm.domain.PlayerEntity;
 import hwm.game.enums.Faction;
@@ -121,6 +122,58 @@ public class PlayerWithArtifactTest {
 		player1 = page.getContent().get(0);
 		assertEquals(2, player1.artifacts().size());
 		assertEquals(0, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
+	}
+
+	@Test
+	public void putOnAndTakeOffEarrings() {
+		ArtifactEntity earring1 = new SimpleEarRing().artifact();
+		ArtifactEntity earring2 = new SimpleEarRing().artifact();
+		ArtifactEntity earring3 = new SimpleEarRing().artifact();
+		artifactEntityDao.save(earring1);
+		artifactEntityDao.save(earring2);
+		artifactEntityDao.save(earring3);
+
+		PlayerEntity player1 = createSimplePlayer();
+		player1.addArtifact(earring1);
+		player1.addArtifact(earring2);
+		player1.addArtifact(earring3);
+		playerEntityDao.save(player1);
+
+		boolean putOnResult = player1.putOnArtifact(earring1.id().toString());
+		assertTrue(putOnResult);
+		putOnResult = player1.putOnArtifact(earring1.id().toString());
+		assertFalse(putOnResult, "can not put on the same item twice");
+
+		putOnResult = player1.putOnArtifact(earring2.id().toString());
+		assertTrue(putOnResult);
+		putOnResult = player1.putOnArtifact(earring2.id().toString());
+		assertFalse(putOnResult, "can not put on the same item twice");
+
+		putOnResult = player1.putOnArtifact(earring3.id().toString());
+		assertFalse(putOnResult, "no available slots");
+		playerEntityDao.save(player1);
+
+
+		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(3, player1.artifacts().size());
+		assertEquals(2, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
+
+
+		boolean takeOffResult = player1.takeOffArtifact(earring3.id().toString());
+		assertFalse(takeOffResult, "can not takeOff item that is not on");
+		takeOffResult = player1.takeOffArtifact(earring2.id().toString());
+		assertTrue(takeOffResult);
+		takeOffResult = player1.takeOffArtifact(earring2.id().toString());
+		assertFalse(takeOffResult, "can not takeOff item that is not on");
+		playerEntityDao.save(player1);
+
+		page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(3, player1.artifacts().size());
+		assertEquals(1, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
 	}
 
 	private PlayerEntity createSimplePlayer() {

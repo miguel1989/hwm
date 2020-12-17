@@ -3,6 +3,7 @@ package hwm.arts;
 import hwm.domain.ArtifactEntity;
 import hwm.game.enums.ArtifactType;
 
+//todo find a better way
 public class SimpleAxe {
 	private final ArtifactEntity artifact = new ArtifactEntity();
 
