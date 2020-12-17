@@ -129,4 +129,8 @@ public class ArtifactEntity extends BaseEntity {
 		this.ownedBy = this.playerEntity.id;
 		this.playerEntity = null;
 	}
+
+	public String durabilityStr() {
+		return this.getDurabilityCurrent() + "/" + this.getDurabilityTotal();
+	}
 }

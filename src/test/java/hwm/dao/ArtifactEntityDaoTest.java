@@ -47,8 +47,7 @@ public class ArtifactEntityDaoTest {
 		assertNull(art.getPlayerEntity());
 		assertEquals("Simple Axe", art.getName());
 		assertEquals(1, art.getForLevel());
-		assertEquals(3, art.getDurabilityTotal());
-		assertEquals(3, art.getDurabilityCurrent());
+		assertEquals("3/3", art.durabilityStr());
 		assertFalse(art.isOn());
 		assertFalse(art.isBroken());
 
@@ -71,14 +70,13 @@ public class ArtifactEntityDaoTest {
 		assertNotNull(art.id());
 		assertNull(art.getPlayerEntity());
 		assertEquals("Simple Axe", art.getName());
-		assertEquals(3, art.getDurabilityTotal());
-		assertEquals(3, art.getDurabilityCurrent());
+		assertEquals("3/3", art.durabilityStr());
 		assertFalse(art.isOn());
 		assertFalse(art.isBroken());
 
 		//decreaseDurability for art that is not on -> nothing should happen
 		art.decreaseDurability();
-		assertEquals(3, art.getDurabilityCurrent());
+		assertEquals("3/3", art.durabilityStr());
 
 		//Put on the artifact and decrease
 		art.putOn();
@@ -86,17 +84,17 @@ public class ArtifactEntityDaoTest {
 		assertFalse(art.isBroken());
 
 		art.decreaseDurability();
-		assertEquals(2, art.getDurabilityCurrent());
+		assertEquals("2/3", art.durabilityStr());
 		assertTrue(art.isOn());
 		assertFalse(art.isBroken());
 
 		art.decreaseDurability();
-		assertEquals(1, art.getDurabilityCurrent());
+		assertEquals("1/3", art.durabilityStr());
 		assertTrue(art.isOn());
 		assertFalse(art.isBroken());
 
 		art.decreaseDurability();
-		assertEquals(0, art.getDurabilityCurrent());
+		assertEquals("0/3", art.durabilityStr());
 		assertFalse(art.isOn());
 		assertTrue(art.isBroken());
 	}

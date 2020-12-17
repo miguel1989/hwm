@@ -176,6 +176,67 @@ public class PlayerWithArtifactTest {
 		assertEquals(1, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
 	}
 
+	@Test
+	public void durabilityAfterFight() {
+		ArtifactEntity earring1 = new SimpleEarRing().artifact();
+		ArtifactEntity earring2 = new SimpleEarRing().artifact();
+		ArtifactEntity earring3 = new SimpleEarRing().artifact();
+		artifactEntityDao.save(earring1);
+		artifactEntityDao.save(earring2);
+		artifactEntityDao.save(earring3);
+
+		ArtifactEntity axe1 = new SimpleAxe().artifact();
+		ArtifactEntity axe2 = new SimpleAxe().artifact();
+		artifactEntityDao.save(axe1);
+		artifactEntityDao.save(axe2);
+
+		PlayerEntity player1 = createSimplePlayer();
+		player1.addArtifact(earring1);
+		player1.addArtifact(earring2);
+		player1.addArtifact(earring3);
+		player1.addArtifact(axe1);
+		player1.addArtifact(axe2);
+		playerEntityDao.save(player1);
+
+		assertTrue(player1.putOnArtifact(earring1.id().toString()));
+		assertTrue(player1.putOnArtifact(earring2.id().toString()));
+		assertTrue(player1.putOnArtifact(axe1.id().toString()));
+		playerEntityDao.save(player1);
+
+
+		player1.decreaseDurabilityAfterFight();
+		playerEntityDao.save(player1);
+
+
+		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(5, player1.artifacts().size());
+		assertEquals(3, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
+		//check durability
+		assertEquals("1/2", player1.artifacts().stream().filter(it -> it.id().equals(earring1.id())).findFirst().get().durabilityStr());
+		assertEquals("1/2", player1.artifacts().stream().filter(it -> it.id().equals(earring2.id())).findFirst().get().durabilityStr());
+		assertEquals("2/2", player1.artifacts().stream().filter(it -> it.id().equals(earring3.id())).findFirst().get().durabilityStr());
+		assertEquals("2/3", player1.artifacts().stream().filter(it -> it.id().equals(axe1.id())).findFirst().get().durabilityStr());
+		assertEquals("3/3", player1.artifacts().stream().filter(it -> it.id().equals(axe2.id())).findFirst().get().durabilityStr());
+
+
+		player1.decreaseDurabilityAfterFight();
+		playerEntityDao.save(player1);
+
+		page = playerEntityDao.findAll(pageable);
+		assertEquals(1, page.getContent().size());
+		player1 = page.getContent().get(0);
+		assertEquals(5, player1.artifacts().size());
+		assertEquals(1, player1.artifacts().stream().filter(ArtifactEntity::isOn).count());
+		//check durability
+		assertEquals("0/2", player1.artifacts().stream().filter(it -> it.id().equals(earring1.id())).findFirst().get().durabilityStr());
+		assertEquals("0/2", player1.artifacts().stream().filter(it -> it.id().equals(earring2.id())).findFirst().get().durabilityStr());
+		assertEquals("2/2", player1.artifacts().stream().filter(it -> it.id().equals(earring3.id())).findFirst().get().durabilityStr());
+		assertEquals("1/3", player1.artifacts().stream().filter(it -> it.id().equals(axe1.id())).findFirst().get().durabilityStr());
+		assertEquals("3/3", player1.artifacts().stream().filter(it -> it.id().equals(axe2.id())).findFirst().get().durabilityStr());
+	}
+
 	private PlayerEntity createSimplePlayer() {
 		PlayerEntity playerEntity = new PlayerEntity("Batman");
 		playerEntity.setFaction(Faction.Elf);
