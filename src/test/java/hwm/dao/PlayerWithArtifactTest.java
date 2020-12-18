@@ -5,7 +5,7 @@ import hwm.arts.SimpleEarRing;
 import hwm.domain.ArtifactEntity;
 import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
-import hwm.game.enums.Faction;
+import hwm.enums.Faction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

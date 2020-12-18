@@ -1,6 +1,6 @@
 package hwm.game;
 
-import hwm.game.enums.SimpleBoardCell;
+import hwm.enums.SimpleBoardCell;
 
 import java.util.ArrayList;
 import java.util.List;

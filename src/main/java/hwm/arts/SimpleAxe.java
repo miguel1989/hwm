@@ -1,7 +1,7 @@
 package hwm.arts;
 
 import hwm.domain.ArtifactEntity;
-import hwm.game.enums.ArtifactType;
+import hwm.enums.ArtifactType;
 
 //todo find a better way
 public class SimpleAxe {

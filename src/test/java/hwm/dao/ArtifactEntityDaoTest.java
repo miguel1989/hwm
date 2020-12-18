@@ -2,7 +2,7 @@ package hwm.dao;
 
 import hwm.domain.ArtifactEntity;
 import hwm.arts.SimpleAxe;
-import hwm.game.enums.ArtifactType;
+import hwm.enums.ArtifactType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

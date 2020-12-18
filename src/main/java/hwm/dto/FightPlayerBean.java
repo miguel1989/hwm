@@ -14,7 +14,6 @@ public class FightPlayerBean {
 	public BaseParamsBean baseParams;
 	public BaseParamsBean creatureParams;
 
-
 	public FightPlayerBean(PlayerEntity playerEntity) {
 		this.id = playerEntity.id().toString();
 		this.name = playerEntity.getName();

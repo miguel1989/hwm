@@ -1,8 +1,8 @@
 package hwm.domain;
 
 import com.google.common.collect.ImmutableList;
-import hwm.game.enums.ArtifactType;
-import hwm.game.enums.Faction;
+import hwm.enums.ArtifactType;
+import hwm.enums.Faction;
 import hwm.util.BigDecimalUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

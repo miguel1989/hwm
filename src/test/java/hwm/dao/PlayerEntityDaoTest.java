@@ -2,7 +2,7 @@ package hwm.dao;
 
 import hwm.domain.PlayerEntity;
 import hwm.dto.FightResult;
-import hwm.game.enums.Faction;
+import hwm.enums.Faction;
 import hwm.util.BigDecimalUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

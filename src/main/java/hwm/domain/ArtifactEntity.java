@@ -1,6 +1,6 @@
 package hwm.domain;
 
-import hwm.game.enums.ArtifactType;
+import hwm.enums.ArtifactType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

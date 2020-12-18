@@ -1,6 +1,6 @@
 package hwm.domain;
 
-import hwm.game.enums.Faction;
+import hwm.enums.Faction;
 
 import java.util.HashMap;
 import java.util.Map;

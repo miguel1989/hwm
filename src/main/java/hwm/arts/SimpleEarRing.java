@@ -1,7 +1,7 @@
 package hwm.arts;
 
 import hwm.domain.ArtifactEntity;
-import hwm.game.enums.ArtifactType;
+import hwm.enums.ArtifactType;
 
 public class SimpleEarRing {
 	private final ArtifactEntity artifact = new ArtifactEntity();

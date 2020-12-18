@@ -1,4 +1,4 @@
-package hwm.game.enums;
+package hwm.enums;
 
 public enum SimpleBoardCell {
 	EMPTY,
