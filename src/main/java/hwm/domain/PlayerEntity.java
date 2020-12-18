@@ -3,11 +3,13 @@ package hwm.domain;
 import com.google.common.collect.ImmutableList;
 import hwm.game.enums.ArtifactType;
 import hwm.game.enums.Faction;
+import hwm.util.BigDecimalUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -29,6 +31,10 @@ public class PlayerEntity extends BaseEntity {
 	int level;
 
 	@Getter
+	@Column(name = "experience")
+	long experience;
+
+	@Getter
 	@Setter
 	@Embedded
 	BaseParams baseParams = new BaseParams();
@@ -40,9 +46,11 @@ public class PlayerEntity extends BaseEntity {
 
 	//todo guilds
 
-	//todo skill
+	@Getter
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "skills_id", referencedColumnName = "id")
+	SkillsEntity skills = new SkillsEntity();
 
-	//todo artifacts
 	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	final Collection<ArtifactEntity> artifacts = new LinkedList<>();
 
@@ -117,7 +125,7 @@ public class PlayerEntity extends BaseEntity {
 		bp.addParams(bpFaction);
 
 		//2. add params from artifacts
-		for (ArtifactEntity artifactEntity: this.artifacts) {
+		for (ArtifactEntity artifactEntity : this.artifacts) {
 			if (!artifactEntity.isOn()) {
 				continue;
 			}
@@ -131,4 +139,29 @@ public class PlayerEntity extends BaseEntity {
 		return bp;
 	}
 
+	public void addExperience(long num) {
+		this.experience += num;
+	}
+
+	//todo find a better way
+	public void addSkill(BigDecimal num) {
+		switch (this.faction) {
+			case Knight:
+				this.skills.knight = BigDecimalUtils.sum(this.skills.knight, num);
+				break;
+			case Necro:
+				this.skills.necro = BigDecimalUtils.sum(this.skills.necro, num);
+				break;
+			case Elf:
+				this.skills.elf = BigDecimalUtils.sum(this.skills.elf, num);
+				break;
+			case DarkElf:
+				this.skills.darkElf = BigDecimalUtils.sum(this.skills.darkElf, num);
+				break;
+			case Mage:
+				this.skills.mage = BigDecimalUtils.sum(this.skills.mage, num);
+				break;
+		}
+
+	}
 }

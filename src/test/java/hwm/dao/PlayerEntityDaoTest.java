@@ -1,7 +1,9 @@
 package hwm.dao;
 
 import hwm.domain.PlayerEntity;
+import hwm.dto.FightResult;
 import hwm.game.enums.Faction;
+import hwm.util.BigDecimalUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class PlayerEntityDaoTest {
+
+	Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
 
 	@Autowired
 	private PlayerEntityDao playerEntityDao;
@@ -32,7 +36,48 @@ public class PlayerEntityDaoTest {
 
 	@Test
 	public void simpleCreate() {
-		PlayerEntity playerEntity = new PlayerEntity("myLittleElf");
+		createSimplePlayer();
+
+		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
+		assertEquals(1L, page.getTotalElements());
+		assertEquals(1, page.getContent().size());
+		assertEquals(1, page.getTotalPages());
+
+		assertEquals(1, page.getContent().get(0).getLevel());
+		assertEquals(0, page.getContent().get(0).getExperience());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getKnight().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getNecro().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getElf().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getDarkElf().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getMage().toString());
+	}
+
+	@Test
+	public void addExpAndSkill() {
+		PlayerEntity playerEntity = createSimplePlayer();
+
+		FightResult fightResult = new FightResult(BigDecimalUtils.fromStr("1.92"), 1234);
+
+		playerEntity.addExperience(fightResult.experience);
+		playerEntity.addSkill(fightResult.skill);
+		playerEntityDao.save(playerEntity);
+
+		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
+		assertEquals(1L, page.getTotalElements());
+		assertEquals(1, page.getContent().size());
+		assertEquals(1, page.getTotalPages());
+
+		assertEquals(1, page.getContent().get(0).getLevel());
+		assertEquals(1234, page.getContent().get(0).getExperience());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getKnight().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getNecro().toString());
+		assertEquals("1.92", page.getContent().get(0).getSkills().getElf().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getDarkElf().toString());
+		assertEquals("0.00", page.getContent().get(0).getSkills().getMage().toString());
+	}
+
+	private PlayerEntity createSimplePlayer() {
+		PlayerEntity playerEntity = new PlayerEntity("Batman");
 		playerEntity.setFaction(Faction.Elf);
 		playerEntity.getBaseParams().setAttack(1);
 		playerEntity.getBaseParams().setDefence(2);
@@ -40,10 +85,6 @@ public class PlayerEntityDaoTest {
 
 		playerEntityDao.save(playerEntity);
 
-		Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
-		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
-		assertEquals(1L, page.getTotalElements());
-		assertEquals(1, page.getContent().size());
-		assertEquals(1, page.getTotalPages());
+		return playerEntity;
 	}
 }
