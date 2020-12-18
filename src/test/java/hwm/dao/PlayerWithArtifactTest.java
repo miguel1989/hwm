@@ -3,6 +3,7 @@ package hwm.dao;
 import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
 import hwm.domain.ArtifactEntity;
+import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
 import hwm.game.enums.Faction;
 import org.junit.jupiter.api.AfterEach;
@@ -178,18 +179,19 @@ public class PlayerWithArtifactTest {
 
 	@Test
 	public void durabilityAfterFight() {
+		//simulate artifact production
 		ArtifactEntity earring1 = new SimpleEarRing().artifact();
 		ArtifactEntity earring2 = new SimpleEarRing().artifact();
 		ArtifactEntity earring3 = new SimpleEarRing().artifact();
+		ArtifactEntity axe1 = new SimpleAxe().artifact();
+		ArtifactEntity axe2 = new SimpleAxe().artifact();
 		artifactEntityDao.save(earring1);
 		artifactEntityDao.save(earring2);
 		artifactEntityDao.save(earring3);
-
-		ArtifactEntity axe1 = new SimpleAxe().artifact();
-		ArtifactEntity axe2 = new SimpleAxe().artifact();
 		artifactEntityDao.save(axe1);
 		artifactEntityDao.save(axe2);
 
+		//simulate artifact purchase
 		PlayerEntity player1 = createSimplePlayer();
 		player1.addArtifact(earring1);
 		player1.addArtifact(earring2);
@@ -198,16 +200,23 @@ public class PlayerWithArtifactTest {
 		player1.addArtifact(axe2);
 		playerEntityDao.save(player1);
 
+		//check players final params without artifacts
+		assertBaseParams(player1.finalParams(), 1, 2, 0, 0, 3, 0, 1);
+
+		//put on all available arts
 		assertTrue(player1.putOnArtifact(earring1.id().toString()));
 		assertTrue(player1.putOnArtifact(earring2.id().toString()));
 		assertTrue(player1.putOnArtifact(axe1.id().toString()));
 		playerEntityDao.save(player1);
 
+		//check players final params with artifacts
+		assertBaseParams(player1.finalParams(), 9, 7, 4, 4, 8, 5, 5);
 
+		//simulate end of the fight
 		player1.decreaseDurabilityAfterFight();
 		playerEntityDao.save(player1);
 
-
+		//check artifacts after fight
 		Page<PlayerEntity> page = playerEntityDao.findAll(pageable);
 		assertEquals(1, page.getContent().size());
 		player1 = page.getContent().get(0);
@@ -220,10 +229,11 @@ public class PlayerWithArtifactTest {
 		assertEquals("2/3", player1.artifacts().stream().filter(it -> it.id().equals(axe1.id())).findFirst().get().durabilityStr());
 		assertEquals("3/3", player1.artifacts().stream().filter(it -> it.id().equals(axe2.id())).findFirst().get().durabilityStr());
 
-
+		//simulate end of the fight
 		player1.decreaseDurabilityAfterFight();
 		playerEntityDao.save(player1);
 
+		//check artifacts after fight
 		page = playerEntityDao.findAll(pageable);
 		assertEquals(1, page.getContent().size());
 		player1 = page.getContent().get(0);
@@ -247,5 +257,22 @@ public class PlayerWithArtifactTest {
 		playerEntityDao.save(playerEntity);
 
 		return playerEntity;
+	}
+
+	private void assertBaseParams(BaseParams bp,
+								  int expectedAttack,
+								  int expectedDefence,
+								  int expectedMagicPower,
+								  int expectedKnowledge,
+								  int expectedInitiative,
+								  int expectedLuck,
+								  int expectedMorale) {
+		assertEquals(expectedAttack, bp.getAttack());
+		assertEquals(expectedDefence, bp.getDefence());
+		assertEquals(expectedMagicPower, bp.getMagicPower());
+		assertEquals(expectedKnowledge, bp.getKnowledge());
+		assertEquals(expectedInitiative, bp.getInitiative());
+		assertEquals(expectedLuck, bp.getLuck());
+		assertEquals(expectedMorale, bp.getMorale());
 	}
 }

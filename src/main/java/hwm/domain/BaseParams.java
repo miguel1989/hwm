@@ -1,11 +1,15 @@
 package hwm.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class BaseParams {
 	@Getter
@@ -42,4 +46,27 @@ public class BaseParams {
 	@Setter
 	@Column(name = "morale")
 	public int morale;
+
+	@Override
+	public BaseParams clone() {
+		BaseParams bp = new BaseParams();
+		bp.setAttack(this.attack);
+		bp.setDefence(this.defence);
+		bp.setMagicPower(this.magicPower);
+		bp.setKnowledge(this.knowledge);
+		bp.setInitiative(this.initiative);
+		bp.setLuck(this.luck);
+		bp.setMorale(this.morale);
+		return bp;
+	}
+
+	public void addParams(BaseParams bp) {
+		this.attack += bp.getAttack();
+		this.defence += bp.getDefence();
+		this.magicPower += bp.getMagicPower();
+		this.knowledge += bp.getKnowledge();
+		this.initiative += bp.getInitiative();
+		this.luck += bp.getLuck();
+		this.morale += bp.getMorale();
+	}
 }

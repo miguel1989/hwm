@@ -4,6 +4,7 @@ public enum Faction {
 	Knight,
 	Necro,
 	Elf,
-	DarkElf
+	DarkElf,
+	Mage,
 	//todo
 }

@@ -40,7 +40,7 @@ public class PlayerEntity extends BaseEntity {
 
 	//todo guilds
 
-	//todo umelka
+	//todo skill
 
 	//todo artifacts
 	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -109,8 +109,26 @@ public class PlayerEntity extends BaseEntity {
 		return this.artifacts.stream().noneMatch(it -> it.isOn() && it.getType().equals(artifactType));
 	}
 
-//	public int allAttack() {
-//		int artifactAttack = this.artifacts.stream().map(art -> art.attack).reduce(0, Integer::sum);
-//		return this.attack + artifactAttack;
-//	}
+	public BaseParams finalParams() {
+		BaseParams bp = this.baseParams.clone();
+
+		//1. add params from faction
+		BaseParams bpFaction = FactionParams.map.get(this.faction);
+		bp.addParams(bpFaction);
+
+		//2. add params from artifacts
+		for (ArtifactEntity artifactEntity: this.artifacts) {
+			if (!artifactEntity.isOn()) {
+				continue;
+			}
+			bp.addParams(artifactEntity.getBaseParams());
+		}
+
+		//3. add params from ??? todo, maybe temp elexirs?
+
+		//skillweel
+
+		return bp;
+	}
+
 }
