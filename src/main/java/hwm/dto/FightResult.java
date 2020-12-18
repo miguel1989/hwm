@@ -9,4 +9,6 @@ public class FightResult {
 	public BigDecimal skill;
 
 	public long experience;
+
+	//todo other stuff
 }

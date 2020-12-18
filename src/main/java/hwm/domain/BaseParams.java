@@ -15,37 +15,37 @@ public class BaseParams {
 	@Getter
 	@Setter
 	@Column(name = "attack")
-	public int attack;
+	int attack;
 
 	@Getter
 	@Setter
 	@Column(name = "defence")
-	public int defence;
+	int defence;
 
 	@Getter
 	@Setter
 	@Column(name = "magic_power")
-	public int magicPower;
+	int magicPower;
 
 	@Getter
 	@Setter
 	@Column(name = "knowledge")
-	public int knowledge;
+	int knowledge;
 
 	@Getter
 	@Setter
 	@Column(name = "initiative")
-	public int initiative;
+	int initiative;
 
 	@Getter
 	@Setter
 	@Column(name = "luck")
-	public int luck;
+	int luck;
 
 	@Getter
 	@Setter
 	@Column(name = "morale")
-	public int morale;
+	int morale;
 
 	@Override
 	public BaseParams clone() {

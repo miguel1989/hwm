@@ -162,6 +162,21 @@ public class PlayerEntity extends BaseEntity {
 				this.skills.mage = BigDecimalUtils.sum(this.skills.mage, num);
 				break;
 		}
+	}
 
+	public BigDecimal currentSkill() {
+		switch (this.faction) {
+			case Knight:
+				return this.skills.knight;
+			case Necro:
+				return this.skills.necro;
+			case Elf:
+				return this.skills.elf;
+			case DarkElf:
+				return this.skills.darkElf;
+			case Mage:
+				return this.skills.mage;
+		}
+		return BigDecimal.ZERO;
 	}
 }
