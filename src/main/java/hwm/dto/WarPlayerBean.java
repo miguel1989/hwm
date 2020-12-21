@@ -30,9 +30,9 @@ public class WarPlayerBean {
 		//creatures
 		Peasant peasant = new Peasant(50);
 		WarCreatureBean peasantBean = new WarCreatureBean(peasant);
-		peasantBean.addPlayerParams(creatureParams);
-		peasantBean.calFinalParams();
-
+		peasantBean.addPlayerParams(creatureParams)
+				.addSkillParams(creatureParams)
+				.calFinalParams();
 
 	}
 }
