@@ -94,7 +94,10 @@ public class ArtifactEntity extends BaseEntity {
 		this.durabilityCurrent = num;
 	}
 
-	public void putOn() {
+	public void putOn(int playerLevel) {
+		if (playerLevel > this.forLevel) {
+			return;
+		}
 		if (isBroken()) {
 			return;
 		}

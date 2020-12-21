@@ -83,7 +83,7 @@ public class PlayerEntity extends BaseEntity {
 		if (optionalArt.isPresent()
 				&& !optionalArt.get().isOn() //artifact is not yet on
 				&& isArtifactSlotFree(optionalArt.get().getType())) {
-			optionalArt.get().putOn();
+			optionalArt.get().putOn(this.level);
 			return optionalArt.get().isOn();
 		}
 

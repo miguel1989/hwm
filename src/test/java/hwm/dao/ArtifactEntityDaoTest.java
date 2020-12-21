@@ -79,7 +79,7 @@ public class ArtifactEntityDaoTest {
 		assertEquals("3/3", art.durabilityStr());
 
 		//Put on the artifact and decrease
-		art.putOn();
+		art.putOn(1);
 		assertTrue(art.isOn());
 		assertFalse(art.isBroken());
 
