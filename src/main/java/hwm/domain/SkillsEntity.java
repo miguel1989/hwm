@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -15,6 +13,11 @@ import java.math.RoundingMode;
 @Table(name = "skills")
 @NoArgsConstructor
 public class SkillsEntity extends BaseEntity {
+
+	@Getter
+	@OneToOne(optional = false)
+	@JoinColumn(name = "player_id")
+	PlayerEntity playerEntity;
 
 	@Getter
 	@Setter
@@ -40,4 +43,8 @@ public class SkillsEntity extends BaseEntity {
 	@Setter
 	@Column(name = "mage")
 	BigDecimal mage = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+
+	public SkillsEntity(PlayerEntity player) {
+		this.playerEntity = player;
+	}
 }

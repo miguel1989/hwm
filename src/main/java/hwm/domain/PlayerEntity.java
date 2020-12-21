@@ -47,9 +47,9 @@ public class PlayerEntity extends BaseEntity {
 	//todo guilds
 
 	@Getter
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "skills_id", referencedColumnName = "id")
-	SkillsEntity skills = new SkillsEntity();
+	@OneToOne(mappedBy = "playerEntity", cascade = CascadeType.ALL, optional = false)
+//	@JoinColumn(name = "skills_id", referencedColumnName = "id")
+	SkillsEntity skills = new SkillsEntity(this);
 
 	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	final Collection<ArtifactEntity> artifacts = new LinkedList<>();
