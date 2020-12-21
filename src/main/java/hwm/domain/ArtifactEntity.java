@@ -15,7 +15,7 @@ public class ArtifactEntity extends BaseEntity {
 	@Getter
 	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "player_entity_id")
+	@JoinColumn(name = "player_id")
 	PlayerEntity playerEntity;
 
 	@Getter
