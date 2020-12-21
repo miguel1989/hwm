@@ -19,25 +19,25 @@ public class SkillsEntity extends BaseEntity {
 	@Getter
 	@Setter
 	@Column(name = "knight")
-	BigDecimal knight = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
+	BigDecimal knight = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
 	@Getter
 	@Setter
 	@Column(name = "necro")
-	BigDecimal necro = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
+	BigDecimal necro = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
 	@Getter
 	@Setter
 	@Column(name = "elf")
-	BigDecimal elf = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
+	BigDecimal elf = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
 	@Getter
 	@Setter
 	@Column(name = "dark_elf")
-	BigDecimal darkElf = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
+	BigDecimal darkElf = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
 	@Getter
 	@Setter
 	@Column(name = "mage")
-	BigDecimal mage = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
+	BigDecimal mage = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 }

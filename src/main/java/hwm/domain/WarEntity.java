@@ -22,7 +22,7 @@ public class WarEntity extends BaseEntity {
 
 	@Getter
 	@Setter
-	@Column(name = "type")
+	@Column(name = "status")
 	WarStatus status = WarStatus.CREATED;
 
 
