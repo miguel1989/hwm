@@ -1,6 +1,6 @@
 package hwm.domain;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import hwm.enums.ArtifactType;
 import hwm.enums.Faction;
 import hwm.util.BigDecimalUtils;
@@ -10,10 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "players")
@@ -52,7 +49,10 @@ public class PlayerEntity extends BaseEntity {
 	SkillsEntity skills = new SkillsEntity(this);
 
 	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	final Collection<ArtifactEntity> artifacts = new LinkedList<>();
+	final Set<ArtifactEntity> artifacts = new HashSet<>();
+
+	@OneToMany(mappedBy = "playerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	final Set<ArmyEntity> armies = new HashSet<>();
 
 	//todo perks
 
@@ -61,7 +61,7 @@ public class PlayerEntity extends BaseEntity {
 	}
 
 	public Collection<ArtifactEntity> artifacts() {
-		return ImmutableList.copyOf(artifacts);
+		return ImmutableSet.copyOf(artifacts);
 	}
 
 	public void addArtifact(ArtifactEntity artifact) {
@@ -178,5 +178,22 @@ public class PlayerEntity extends BaseEntity {
 				return this.skills.mage;
 		}
 		return BigDecimal.ZERO;
+	}
+
+	public void addArmy(ArmyEntity armyEntity) {
+		this.armies.add(armyEntity);
+	}
+
+	public Collection<ArmyEntity> armies() {
+		return ImmutableSet.copyOf(armies);
+	}
+
+	public void setArmy(int level1Count, int level2Count) {
+		Optional<ArmyEntity> optionalArmy = armies.stream().filter(it -> it.getFaction().equals(faction)).findFirst();
+		if (!optionalArmy.isPresent()) {
+			return;
+		}
+		optionalArmy.get().setLevel1Count(level1Count);
+		optionalArmy.get().setLevel2Count(level2Count);
 	}
 }
