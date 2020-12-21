@@ -31,7 +31,7 @@ public class WarCreatureBean extends BaseCreatureParamsBean {
 		this.mana = simpleCreature.mana;
 	}
 
-	public void addPlayerParams(BaseParamsBean baseParamsBean) {
+	public WarCreatureBean addPlayerParams(BaseParamsBean baseParamsBean) {
 		this.paramsFromPlayer.attack = baseParamsBean.attack;
 		this.paramsFromPlayer.defence = baseParamsBean.defence;
 		this.paramsFromPlayer.initiative = BigDecimalUtils.fromInt(baseParamsBean.initiative);
@@ -39,12 +39,14 @@ public class WarCreatureBean extends BaseCreatureParamsBean {
 
 		this.paramsFromPlayer.luck = baseParamsBean.luck;
 		this.paramsFromPlayer.morale = baseParamsBean.morale;
+		return this;
 	}
 
-	public void addSkillParams(BaseParamsBean baseParamsBean) {
+	public WarCreatureBean addSkillParams(BaseParamsBean baseParamsBean) {
 		this.paramsFromSkill.attack = baseParamsBean.attack;
 		this.paramsFromSkill.defence = baseParamsBean.defence;
 		this.paramsFromSkill.initiative = BigDecimalUtils.fromInt(baseParamsBean.initiative);
+		return this;
 	}
 
 	public void calFinalParams() {
