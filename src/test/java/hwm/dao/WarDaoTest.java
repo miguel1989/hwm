@@ -6,10 +6,12 @@ import hwm.creatures.Peasant;
 import hwm.domain.*;
 import hwm.dto.BoardBean;
 import hwm.dto.TeamBean;
+import hwm.dto.WarBean;
 import hwm.dto.WarPlayerBean;
 import hwm.enums.Faction;
 import hwm.enums.TeamType;
 import hwm.enums.WarType;
+import hwm.util.JacksonJsonSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,13 +30,15 @@ public class WarDaoTest {
 	Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
 
 	@Autowired
-	private BotPlayerDao botPlayerDao;
+	BotPlayerDao botPlayerDao;
 	@Autowired
-	private PlayerEntityDao playerEntityDao;
+	PlayerEntityDao playerEntityDao;
 	@Autowired
-	private ArtifactEntityDao artifactEntityDao;
+	ArtifactEntityDao artifactEntityDao;
 	@Autowired
-	private WarEntityDao warEntityDao;
+	WarEntityDao warEntityDao;
+
+	JacksonJsonSerializer jacksonJsonSerializer = new JacksonJsonSerializer();
 
 	@BeforeEach
 	public void setup() {
@@ -59,31 +63,43 @@ public class WarDaoTest {
 
 		BotPlayerEntity botPlayer = createBot();
 
-		BoardBean boardBean = new BoardBean(10, 10);
+		WarBean warBean = new WarBean(WarType.HUNT);
+		warBean.boardBean = new BoardBean(10, 10);
 
-		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, new TeamBean(TeamType.RED, 0), boardBean);
-		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, new TeamBean(TeamType.BLUE, 0), boardBean);
+		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, warBean.boardBean);
+		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, warBean.boardBean);
+
+		warBean.redTeam.addPlayer(warPlayerBean1);
+		warBean.blueTeam.addPlayer(warPlayerBean2);
+
+		warBean.redTeam.beforeBattlePreparation();
+		warBean.blueTeam.beforeBattlePreparation();
+
+		System.out.println(jacksonJsonSerializer.toJson(warBean));
 
 		checkPlayerBean(warPlayerBean1);
 		checkBotBean(warPlayerBean2);
 
 
 		WarEntity warEntity = new WarEntity();
-		warEntity.setType(WarType.HUNT);
-		warEntity.addRedTeamPlayer(player1.id().toString());
-		warEntity.addBlueTeamPlayer(botPlayer.id().toString());
+		warEntity.setType(warBean.type);
+		warBean.redTeam.players.forEach(it -> warEntity.addRedTeamPlayer(it.id));
+		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
 		warEntityDao.save(warEntity);
 
 		Page<WarEntity> page = warEntityDao.findAll(pageable);
 		assertEquals(1L, page.getTotalElements());
 		assertEquals(1, page.getContent().size());
+		assertEquals(2, page.getContent().get(0).warTeams().size());
+		assertTrue(page.getContent().get(0).warTeams().stream().anyMatch(it-> it.getType().equals(TeamType.RED)));
+		assertTrue(page.getContent().get(0).warTeams().stream().anyMatch(it-> it.getType().equals(TeamType.BLUE)));
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {
 //		assertEquals(player1.getName(), WarPlayerBean.name);
 		assertTrue(playerBean.hasHero);
 		assertEquals(Faction.Knight, playerBean.faction);
-		assertEquals(TeamType.RED, playerBean.teamBean.team);
+		assertEquals(TeamType.RED, playerBean.teamType);
 		assertEquals(1, playerBean.creatures.size());
 		assertEquals("Peasant", playerBean.creatures.get(0).name);
 		assertEquals(30, playerBean.creatures.get(0).countFinal);
@@ -105,7 +121,7 @@ public class WarDaoTest {
 
 	private void checkBotBean(WarPlayerBean botBean) {
 		assertFalse(botBean.hasHero);
-		assertEquals(TeamType.BLUE, botBean.teamBean.team);
+		assertEquals(TeamType.BLUE, botBean.teamType);
 
 		assertEquals(1, botBean.creatures.size());
 		assertEquals("Peasant", botBean.creatures.get(0).name);
