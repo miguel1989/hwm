@@ -188,6 +188,14 @@ public class PlayerEntity extends BaseEntity {
 		return ImmutableSet.copyOf(armies);
 	}
 
+	public ArmyEntity currentArmy() {
+		Optional<ArmyEntity> optionalArmy = armies.stream().filter(it -> it.getFaction().equals(faction)).findFirst();
+		if (!optionalArmy.isPresent()) {
+			throw new RuntimeException("No army was found for " + faction.name());
+		}
+		return optionalArmy.get();
+	}
+
 	public void setArmy(int level1Count, int level2Count) {
 		Optional<ArmyEntity> optionalArmy = armies.stream().filter(it -> it.getFaction().equals(faction)).findFirst();
 		if (!optionalArmy.isPresent()) {

@@ -21,6 +21,10 @@ public class CreatureEntity extends BaseEntity {
 	String name;
 
 	@Getter
+	@Column(name = "count")
+	int count;
+
+	@Getter
 	@Column(name = "attack")
 	int attack;
 
@@ -66,6 +70,8 @@ public class CreatureEntity extends BaseEntity {
 		this.botPlayerEntity = botPlayerEntity;
 
 		this.name = simpleCreature.name;
+		this.count = simpleCreature.count;
+
 		this.attack = simpleCreature.attack;
 		this.defence = simpleCreature.defence;
 		this.minDamage = simpleCreature.minDamage;
@@ -76,5 +82,23 @@ public class CreatureEntity extends BaseEntity {
 		this.shots = simpleCreature.shots;
 		this.range = simpleCreature.range;
 		this.mana = simpleCreature.mana;
+	}
+
+	public SimpleCreature toSimpleCreature() {
+		SimpleCreature simpleCreature = new SimpleCreature();
+		simpleCreature.name = this.name;
+		simpleCreature.count = this.count;
+
+		simpleCreature.attack = this.attack;
+		simpleCreature.defence = this.defence;
+		simpleCreature.minDamage = this.minDamage;
+		simpleCreature.maxDamage = this.maxDamage;
+		simpleCreature.hp = this.hp;
+		simpleCreature.speed = this.speed;
+		simpleCreature.initiative = this.initiative;
+		simpleCreature.shots = this.shots;
+		simpleCreature.range = this.range;
+		simpleCreature.mana = this.mana;
+		return simpleCreature;
 	}
 }

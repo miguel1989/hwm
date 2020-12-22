@@ -4,7 +4,9 @@ import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
 import hwm.creatures.Peasant;
 import hwm.domain.*;
+import hwm.dto.WarPlayerBean;
 import hwm.enums.Faction;
+import hwm.enums.TeamType;
 import hwm.enums.WarType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class WarDaoTest {
@@ -66,6 +67,59 @@ public class WarDaoTest {
 		Page<WarEntity> page = warEntityDao.findAll(pageable);
 		assertEquals(1L, page.getTotalElements());
 		assertEquals(1, page.getContent().size());
+
+		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, TeamType.RED, 0);
+		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, TeamType.BLUE, 0);
+
+		checkPlayerBean(warPlayerBean1);
+		checkBotBean(warPlayerBean2);
+	}
+
+	private void checkPlayerBean(WarPlayerBean playerBean) {
+//		assertEquals(player1.getName(), WarPlayerBean.name);
+		assertTrue(playerBean.hasHero);
+		assertEquals(Faction.Knight, playerBean.faction);
+		assertEquals(TeamType.RED, playerBean.team);
+		assertEquals(1, playerBean.creatures.size());
+		assertEquals("Peasant", playerBean.creatures.get(0).name);
+		assertEquals(30, playerBean.creatures.get(0).countFinal);
+
+		assertEquals(10, playerBean.creatures.get(0).paramsFinal.attack);
+		assertEquals(9, playerBean.creatures.get(0).paramsFinal.defence);
+		assertEquals(1, playerBean.creatures.get(0).paramsFinal.minDamage);
+		assertEquals(1, playerBean.creatures.get(0).paramsFinal.maxDamage);
+		assertEquals(4, playerBean.creatures.get(0).paramsFinal.hp);
+		assertEquals(4, playerBean.creatures.get(0).paramsFinal.speed);
+		assertEquals("8.4", playerBean.creatures.get(0).paramsFinal.initiative.toString());
+		assertEquals(0, playerBean.creatures.get(0).paramsFinal.shots);
+		assertEquals(0, playerBean.creatures.get(0).paramsFinal.range);
+		assertEquals(0, playerBean.creatures.get(0).paramsFinal.mana);
+
+		assertEquals(5, playerBean.creatures.get(0).paramsFinal.luck);
+		assertEquals(5, playerBean.creatures.get(0).paramsFinal.morale);
+	}
+
+	private void checkBotBean(WarPlayerBean botBean) {
+		assertFalse(botBean.hasHero);
+		assertEquals(TeamType.BLUE, botBean.team);
+
+		assertEquals(1, botBean.creatures.size());
+		assertEquals("Peasant", botBean.creatures.get(0).name);
+		assertEquals(10, botBean.creatures.get(0).countFinal);
+
+		assertEquals(1, botBean.creatures.get(0).paramsFinal.attack);
+		assertEquals(1, botBean.creatures.get(0).paramsFinal.defence);
+		assertEquals(1, botBean.creatures.get(0).paramsFinal.minDamage);
+		assertEquals(1, botBean.creatures.get(0).paramsFinal.maxDamage);
+		assertEquals(4, botBean.creatures.get(0).paramsFinal.hp);
+		assertEquals(4, botBean.creatures.get(0).paramsFinal.speed);
+		assertEquals("8.0", botBean.creatures.get(0).paramsFinal.initiative.toString());
+		assertEquals(0, botBean.creatures.get(0).paramsFinal.shots);
+		assertEquals(0, botBean.creatures.get(0).paramsFinal.range);
+		assertEquals(0, botBean.creatures.get(0).paramsFinal.mana);
+
+		assertEquals(0, botBean.creatures.get(0).paramsFinal.luck);
+		assertEquals(0, botBean.creatures.get(0).paramsFinal.morale); //todo should be 1
 	}
 
 	private PlayerEntity createSimplePlayer() {

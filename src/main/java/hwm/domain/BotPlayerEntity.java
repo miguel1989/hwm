@@ -20,6 +20,12 @@ public class BotPlayerEntity extends BaseEntity {
 	@Column(name = "name")
 	String name;
 
+	@Getter
+	@Setter
+	@Column(name = "has_hero")
+	boolean hasHero = false;
+	//todo baseParams for hero
+
 	@OneToMany(mappedBy = "botPlayerEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	final Set<CreatureEntity> creatures = new HashSet<>();
 

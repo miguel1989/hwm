@@ -9,7 +9,7 @@ public class BaseCreatureParamsBean {
 	public int maxDamage;
 	public int hp;
 	public int speed;
-	public BigDecimal initiative;
+	public BigDecimal initiative = BigDecimal.ZERO;
 	public int shots;
 	public int range;
 	public int mana;
