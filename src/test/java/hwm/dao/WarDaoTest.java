@@ -4,6 +4,8 @@ import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
 import hwm.creatures.Peasant;
 import hwm.domain.*;
+import hwm.dto.BoardBean;
+import hwm.dto.TeamBean;
 import hwm.dto.WarPlayerBean;
 import hwm.enums.Faction;
 import hwm.enums.TeamType;
@@ -57,6 +59,14 @@ public class WarDaoTest {
 
 		BotPlayerEntity botPlayer = createBot();
 
+		BoardBean boardBean = new BoardBean(10, 10);
+
+		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, new TeamBean(TeamType.RED, 0), boardBean);
+		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, new TeamBean(TeamType.BLUE, 0), boardBean);
+
+		checkPlayerBean(warPlayerBean1);
+		checkBotBean(warPlayerBean2);
+
 
 		WarEntity warEntity = new WarEntity();
 		warEntity.setType(WarType.HUNT);
@@ -67,19 +77,13 @@ public class WarDaoTest {
 		Page<WarEntity> page = warEntityDao.findAll(pageable);
 		assertEquals(1L, page.getTotalElements());
 		assertEquals(1, page.getContent().size());
-
-		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, TeamType.RED, 0);
-		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, TeamType.BLUE, 0);
-
-		checkPlayerBean(warPlayerBean1);
-		checkBotBean(warPlayerBean2);
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {
 //		assertEquals(player1.getName(), WarPlayerBean.name);
 		assertTrue(playerBean.hasHero);
 		assertEquals(Faction.Knight, playerBean.faction);
-		assertEquals(TeamType.RED, playerBean.team);
+		assertEquals(TeamType.RED, playerBean.teamBean.team);
 		assertEquals(1, playerBean.creatures.size());
 		assertEquals("Peasant", playerBean.creatures.get(0).name);
 		assertEquals(30, playerBean.creatures.get(0).countFinal);
@@ -101,7 +105,7 @@ public class WarDaoTest {
 
 	private void checkBotBean(WarPlayerBean botBean) {
 		assertFalse(botBean.hasHero);
-		assertEquals(TeamType.BLUE, botBean.team);
+		assertEquals(TeamType.BLUE, botBean.teamBean.team);
 
 		assertEquals(1, botBean.creatures.size());
 		assertEquals("Peasant", botBean.creatures.get(0).name);

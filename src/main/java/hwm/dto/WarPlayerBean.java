@@ -24,18 +24,18 @@ public class WarPlayerBean {
 	public BaseParamsBean heroParams = new BaseParamsBean();
 	public List<WarCreatureBean> creatures = new ArrayList<>();
 	public boolean hasHero = false;
-	public TeamType team;
-	public int teamOrderNum;
+	public TeamBean teamBean;
+	public BoardBean boardBean;
 
-	public WarPlayerBean(PlayerEntity playerEntity, TeamType team, int teamOrderNum) {
+	public WarPlayerBean(PlayerEntity playerEntity, TeamBean teamBean, BoardBean boardBean) {
 		this.id = playerEntity.id().toString();
 		this.name = playerEntity.getName();
 		this.level = playerEntity.getLevel();
 		this.faction = playerEntity.getFaction();
 		this.heroParams = new BaseParamsBean(playerEntity.finalParams());
 		this.hasHero = true;
-		this.team = team;
-		this.teamOrderNum = teamOrderNum;
+		this.teamBean = teamBean;
+		this.boardBean = boardBean;
 
 		//todo params from skillwheel
 
@@ -53,14 +53,16 @@ public class WarPlayerBean {
 				.calFinalParams();
 
 		creatures.add(peasantBean);
+
+		defaultPositionForCreatures();
 	}
 
-	public WarPlayerBean(BotPlayerEntity botPlayerEntity, TeamType team, int teamOrderNum) {
+	public WarPlayerBean(BotPlayerEntity botPlayerEntity, TeamBean teamBean, BoardBean boardBean) {
 		this.id = botPlayerEntity.id().toString();
 		this.name = botPlayerEntity.getName();
 		this.hasHero = false;
-		this.team = team;
-		this.teamOrderNum = teamOrderNum;
+		this.teamBean = teamBean;
+		this.boardBean = boardBean;
 
 		this.creatures = botPlayerEntity.creatures()
 				.stream()
@@ -71,6 +73,18 @@ public class WarPlayerBean {
 					return warCreatureBean;
 				})
 				.collect(Collectors.toList());
+
+		defaultPositionForCreatures();
+	}
+
+	public void defaultPositionForCreatures() {
+		int i = 0;
+		for (WarCreatureBean warCreatureBean: this.creatures) {
+			int tmpX = TeamType.RED.equals(teamBean.team) ? 0 : this.boardBean.width;
+			int tmpY = i;//todo take into account creature SIZE
+			warCreatureBean.x = tmpX;
+			warCreatureBean.y = tmpY;
+		}
 
 	}
 
