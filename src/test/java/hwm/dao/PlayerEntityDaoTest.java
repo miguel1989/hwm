@@ -61,7 +61,8 @@ public class PlayerEntityDaoTest {
 		assertEquals(2, armies.size());
 		ArmyEntity currArmy = armies.stream().filter(it -> it.getFaction().equals(player.getFaction())).findFirst().get();
 		assertEquals(10, currArmy.getLevel1Count());
-		currArmy.setLevel1Count(25);
+
+		player.setArmy(25, 10);
 		playerEntityDao.save(player);
 
 		page = playerEntityDao.findAll(pageable);
@@ -71,6 +72,7 @@ public class PlayerEntityDaoTest {
 		assertEquals(2, armies.size());
 		currArmy = armies.stream().filter(it -> it.getFaction().equals(player1.getFaction())).findFirst().get();
 		assertEquals(25, currArmy.getLevel1Count());
+		assertEquals(10, currArmy.getLevel2Count());
 	}
 
 	@Test
