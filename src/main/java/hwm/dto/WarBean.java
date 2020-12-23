@@ -15,4 +15,9 @@ public class WarBean {
 	public WarBean(WarType type) {
 		this.type = type;
 	}
+
+	public void beforeBattlePreparation() {
+		redTeam.beforeBattlePreparation(boardBean);
+		blueTeam.beforeBattlePreparation(boardBean);
+	}
 }

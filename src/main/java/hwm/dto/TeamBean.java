@@ -14,11 +14,10 @@ public class TeamBean {
 	}
 
 	public void addPlayer(WarPlayerBean warPlayerBean) {
-		warPlayerBean.teamType = type;
 		players.add(warPlayerBean);
 	}
 
-	public void beforeBattlePreparation() {
-		this.players.forEach(WarPlayerBean::defaultPositionForCreatures);
+	public void beforeBattlePreparation(BoardBean boardBean) {
+		this.players.forEach(it -> it.defaultPositionForCreatures(type, boardBean));
 	}
 }

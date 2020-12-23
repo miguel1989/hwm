@@ -66,14 +66,13 @@ public class WarDaoTest {
 		WarBean warBean = new WarBean(WarType.HUNT);
 		warBean.boardBean = new BoardBean(10, 10);
 
-		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1, warBean.boardBean);
-		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer, warBean.boardBean);
+		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1);
+		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer);
 
 		warBean.redTeam.addPlayer(warPlayerBean1);
 		warBean.blueTeam.addPlayer(warPlayerBean2);
 
-		warBean.redTeam.beforeBattlePreparation();
-		warBean.blueTeam.beforeBattlePreparation();
+		warBean.beforeBattlePreparation();
 
 		System.out.println(jacksonJsonSerializer.toJson(warBean));
 
@@ -99,7 +98,6 @@ public class WarDaoTest {
 //		assertEquals(player1.getName(), WarPlayerBean.name);
 		assertTrue(playerBean.hasHero);
 		assertEquals(Faction.Knight, playerBean.faction);
-		assertEquals(TeamType.RED, playerBean.teamType);
 		assertEquals(1, playerBean.creatures.size());
 		assertEquals("Peasant", playerBean.creatures.get(0).name);
 		assertEquals(30, playerBean.creatures.get(0).countFinal);
@@ -121,7 +119,6 @@ public class WarDaoTest {
 
 	private void checkBotBean(WarPlayerBean botBean) {
 		assertFalse(botBean.hasHero);
-		assertEquals(TeamType.BLUE, botBean.teamType);
 
 		assertEquals(1, botBean.creatures.size());
 		assertEquals("Peasant", botBean.creatures.get(0).name);

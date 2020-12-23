@@ -4,7 +4,6 @@ import com.datastax.driver.core.utils.UUIDs;
 import hwm.creature.SimpleCreature;
 import hwm.util.BigDecimalUtils;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class WarCreatureBean {
@@ -16,11 +15,9 @@ public class WarCreatureBean {
 	public int y = -1;
 
 	public BaseCreatureParamsBean paramsInitial = new BaseCreatureParamsBean();
-	public BaseCreatureParamsBean paramsFromPlayer = new BaseCreatureParamsBean();
-	public BaseCreatureParamsBean paramsFromSkill = new BaseCreatureParamsBean();
 	public BaseCreatureParamsBean paramsFinal = new BaseCreatureParamsBean();
 
-	public WarCreatureBean(SimpleCreature simpleCreature) {
+	public WarCreatureBean(SimpleCreature simpleCreature, BaseParamsBean paramsFromPlayer) {
 		this.name = simpleCreature.name;
 		this.count = simpleCreature.count;
 
@@ -34,41 +31,25 @@ public class WarCreatureBean {
 		this.paramsInitial.shots = simpleCreature.shots;
 		this.paramsInitial.range = simpleCreature.range;
 		this.paramsInitial.mana = simpleCreature.mana;
+
+		this.addPlayerParams(paramsFromPlayer);
 	}
 
-	public WarCreatureBean addPlayerParams(BaseParamsBean baseParamsBean) {
-		this.paramsFromPlayer.attack = baseParamsBean.attack;
-		this.paramsFromPlayer.defence = baseParamsBean.defence;
-		this.paramsFromPlayer.initiative = BigDecimalUtils.fromInt(baseParamsBean.initiative);
-		//todo maybe later add also max/min dmg from player
+	void addPlayerParams(BaseParamsBean paramsFromPlayer) {
+		this.paramsFinal.attack = this.paramsInitial.attack + paramsFromPlayer.attack;
+		this.paramsFinal.defence = this.paramsInitial.defence + paramsFromPlayer.defence;
+		this.paramsFinal.minDamage = this.paramsInitial.minDamage;//todo can be increased by perks
+		this.paramsFinal.maxDamage = this.paramsInitial.maxDamage;//todo can be increased by perks
+		this.paramsFinal.hp = this.paramsInitial.hp;//todo can be increased by perks
+		this.paramsFinal.speed = this.paramsInitial.speed;//todo can be increased by perks
+		this.paramsFinal.initiative = BigDecimalUtils.addInitiative(this.paramsInitial.initiative, BigDecimalUtils.fromInt(paramsFromPlayer.initiative));
+		this.paramsFinal.shots = this.paramsInitial.shots;//todo
+		this.paramsFinal.range = this.paramsInitial.range;//todo
+		this.paramsFinal.mana = this.paramsInitial.mana;//todo
 
-		this.paramsFromPlayer.luck = baseParamsBean.luck;
-		this.paramsFromPlayer.morale = baseParamsBean.morale;
-		return this;
-	}
+		this.paramsFinal.luck = this.paramsInitial.luck + paramsFromPlayer.luck;//todo
+		this.paramsFinal.morale = this.paramsInitial.morale + paramsFromPlayer.morale;//todo
 
-	public WarCreatureBean addSkillParams(BaseParamsBean baseParamsBean) {
-		this.paramsFromSkill.attack = baseParamsBean.attack;
-		this.paramsFromSkill.defence = baseParamsBean.defence;
-		this.paramsFromSkill.initiative = BigDecimalUtils.fromInt(baseParamsBean.initiative);
-		return this;
-	}
-
-	public void calFinalParams() {
-		this.paramsFinal.attack = this.paramsInitial.attack + this.paramsFromPlayer.attack + this.paramsFromSkill.attack;
-		this.paramsFinal.defence = this.paramsInitial.defence + this.paramsFromPlayer.defence + this.paramsFromSkill.defence;
-		this.paramsFinal.minDamage = this.paramsInitial.minDamage; //todo
-		this.paramsFinal.maxDamage = this.paramsInitial.maxDamage; //todo
-		this.paramsFinal.hp = this.paramsInitial.hp; //todo
-		this.paramsFinal.speed = this.paramsInitial.speed; //todo
-		BigDecimal tmpIni = BigDecimalUtils.sum(this.paramsFromPlayer.initiative, this.paramsFromSkill.initiative);
-		this.paramsFinal.initiative = BigDecimalUtils.addInitiative(this.paramsInitial.initiative, tmpIni);
-		this.paramsFinal.shots = this.paramsInitial.shots; //todo
-		this.paramsFinal.range = this.paramsInitial.range; //todo
-		this.paramsFinal.mana = this.paramsInitial.mana; //todo
-
-		this.paramsFinal.luck = this.paramsInitial.luck + this.paramsFromPlayer.luck;
-		this.paramsFinal.morale = this.paramsInitial.morale + this.paramsFromPlayer.morale;
 		//todo perks can add count
 		this.countFinal = this.count;
 	}
