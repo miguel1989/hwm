@@ -4,6 +4,7 @@ import hwm.enums.TeamType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TeamBean {
 	public final TeamType type;
@@ -19,5 +20,12 @@ public class TeamBean {
 
 	public void beforeBattlePreparation(BoardBean boardBean) {
 		this.players.forEach(it -> it.defaultPositionForCreatures(type, boardBean));
+	}
+
+	public List<WarCreatureBean> allCreatures() {
+		return this.players
+				.stream()
+				.flatMap(player -> player.creatures.stream())
+				.collect(Collectors.toList());
 	}
 }

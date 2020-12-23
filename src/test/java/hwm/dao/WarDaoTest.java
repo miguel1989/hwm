@@ -100,7 +100,8 @@ public class WarDaoTest {
 		assertEquals(Faction.Knight, playerBean.faction);
 		assertEquals(1, playerBean.creatures.size());
 		assertEquals("Peasant", playerBean.creatures.get(0).name);
-		assertEquals(30, playerBean.creatures.get(0).countFinal);
+		assertEquals(30, playerBean.creatures.get(0).count);
+		assertEquals(30, playerBean.creatures.get(0).currentCount);
 
 		assertEquals(10, playerBean.creatures.get(0).paramsFinal.attack);
 		assertEquals(9, playerBean.creatures.get(0).paramsFinal.defence);
@@ -122,7 +123,8 @@ public class WarDaoTest {
 
 		assertEquals(1, botBean.creatures.size());
 		assertEquals("Peasant", botBean.creatures.get(0).name);
-		assertEquals(10, botBean.creatures.get(0).countFinal);
+		assertEquals(10, botBean.creatures.get(0).count);
+		assertEquals(10, botBean.creatures.get(0).currentCount);
 
 		assertEquals(1, botBean.creatures.get(0).paramsFinal.attack);
 		assertEquals(1, botBean.creatures.get(0).paramsFinal.defence);
