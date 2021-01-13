@@ -58,6 +58,8 @@ public class WarCreatureBean {
 		this.startATB = BigDecimalUtils.fromInt(rndStartAtb);
 		this.currentATB = BigDecimalUtils.fromInt(rndStartAtb);
 
+		this.paramsInitial = null;//to exclude it from json
+
 		BaseParams playerFinalParams = playerEntity.finalParams();
 		this.paramsFinal.attack = playerFinalParams.getAttack();
 		this.paramsFinal.defence = playerFinalParams.getDefence();

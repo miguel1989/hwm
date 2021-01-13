@@ -8,6 +8,7 @@ import hwm.enums.WarType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -43,6 +44,13 @@ public class WarEntity extends BaseEntity {
 	@Setter
 	@Column(name = "preparation_timeout")
 	int preparationTimeOut = 0;
+
+	@Getter
+	@Setter
+	@Column(name = "initial_json")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	String initialJson;
 
 	//todo somekind of snapshot for the users in the battle
 

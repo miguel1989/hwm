@@ -74,7 +74,8 @@ public class WarDaoTest {
 
 		warBean.beforeBattlePreparation();
 
-		System.out.println(jacksonJsonSerializer.toJson(warBean));
+		String initialJson = jacksonJsonSerializer.toJson(warBean);
+		System.out.println(initialJson);
 
 		checkPlayerBean(warPlayerBean1);
 		checkBotBean(warPlayerBean2);
@@ -84,9 +85,14 @@ public class WarDaoTest {
 		warEntity.setType(warBean.type);
 		warEntity.setPreparationTimeOut(warBean.preparationTimeOut);
 		warEntity.setTurnTimeOut(warBean.turnTimeOut);
+		warEntity.setInitialJson(initialJson);
 
 		warBean.redTeam.players.forEach(it -> warEntity.addRedTeamPlayer(it.id));
 		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
+		warEntityDao.save(warEntity);
+
+		//todo later on this should be done with cron and/or after completes his preparation
+		warEntity.start();
 		warEntityDao.save(warEntity);
 
 		Page<WarEntity> page = warEntityDao.findAll(pageable);
