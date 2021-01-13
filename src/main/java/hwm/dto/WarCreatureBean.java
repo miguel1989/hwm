@@ -2,6 +2,8 @@ package hwm.dto;
 
 import com.datastax.driver.core.utils.UUIDs;
 import hwm.creature.SimpleCreature;
+import hwm.domain.BaseParams;
+import hwm.domain.PlayerEntity;
 import hwm.util.BigDecimalUtils;
 
 import java.math.BigDecimal;
@@ -20,6 +22,7 @@ public class WarCreatureBean {
 	public BigDecimal startATB;
 	public int x = -1;
 	public int y = -1;
+	public boolean isHero = false;
 
 	public BaseCreatureParamsBean paramsInitial = new BaseCreatureParamsBean();
 	public BaseCreatureParamsBean paramsFinal = new BaseCreatureParamsBean();
@@ -44,6 +47,30 @@ public class WarCreatureBean {
 		this.paramsInitial.mana = simpleCreature.mana;
 
 		this.addPlayerParams(paramsFromPlayer);
+	}
+
+	public WarCreatureBean(PlayerEntity playerEntity) {
+		this.name = playerEntity.getName() + "[" + playerEntity.getLevel() + "]";
+		this.count = 1;
+		this.currentCount = 1;
+		this.isHero = true;
+		int rndStartAtb = random.nextInt(11);
+		this.startATB = BigDecimalUtils.fromInt(rndStartAtb);
+		this.currentATB = BigDecimalUtils.fromInt(rndStartAtb);
+
+		BaseParams playerFinalParams = playerEntity.finalParams();
+		this.paramsFinal.attack = playerFinalParams.getAttack();
+		this.paramsFinal.defence = playerFinalParams.getDefence();
+		this.paramsFinal.minDamage = playerFinalParams.getAttack();//todo create formula
+		this.paramsFinal.maxDamage = playerFinalParams.getAttack() + 1 + playerEntity.getLevel();//todo create formula
+		this.paramsFinal.hp = 1;
+		this.paramsFinal.speed = 1;
+		this.paramsFinal.initiative = BigDecimal.TEN;//todo arts/perks can add ini
+		this.paramsFinal.shots = 0;//todo
+		this.paramsFinal.range = 0;//todo
+		this.paramsFinal.mana = 0;//todo
+		this.paramsFinal.luck = 0;//not needed for hero
+		this.paramsFinal.morale = 0;//not needed for hero
 	}
 
 	void addPlayerParams(BaseParamsBean paramsFromPlayer) {

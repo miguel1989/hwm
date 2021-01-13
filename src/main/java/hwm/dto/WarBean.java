@@ -12,8 +12,8 @@ public class WarBean {
 	public WarType type;
 	public BoardBean boardBean;
 
-	public TeamBean redTeam = new TeamBean(TeamType.RED);
-	public TeamBean blueTeam = new TeamBean(TeamType.BLUE);
+	public TeamBean redTeam = new TeamBean(this, TeamType.RED);
+	public TeamBean blueTeam = new TeamBean(this, TeamType.BLUE);
 
 	public int currAtbSecond = 0;
 
@@ -22,8 +22,8 @@ public class WarBean {
 	}
 
 	public void beforeBattlePreparation() {
-		redTeam.beforeBattlePreparation(boardBean);
-		blueTeam.beforeBattlePreparation(boardBean);
+		redTeam.beforeBattlePreparation();
+		blueTeam.beforeBattlePreparation();
 	}
 
 	public List<WarCreatureBean> allCreatures() {

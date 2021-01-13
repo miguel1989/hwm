@@ -1,5 +1,6 @@
 package hwm.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.enums.TeamType;
 
 import java.util.ArrayList;
@@ -7,19 +8,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TeamBean {
+	@JsonIgnore
+	public final WarBean war;
 	public final TeamType type;
 	public List<WarPlayerBean> players = new ArrayList<>(4);
 
-	public TeamBean(TeamType type) {
+	public TeamBean(WarBean war, TeamType type) {
+		this.war = war;
 		this.type = type;
 	}
 
 	public void addPlayer(WarPlayerBean warPlayerBean) {
+		warPlayerBean.war = war;
 		players.add(warPlayerBean);
 	}
 
-	public void beforeBattlePreparation(BoardBean boardBean) {
-		this.players.forEach(it -> it.defaultPositionForCreatures(type, boardBean));
+	public void beforeBattlePreparation() {
+		int availableHeightForPlayer = war.boardBean.height / this.players.size();
+		for (int i = 0 ; i< this.players.size(); i++) {
+			players.get(i).defaultPositionForCreatures(type, i, availableHeightForPlayer);
+		}
 	}
 
 	public List<WarCreatureBean> allCreatures() {

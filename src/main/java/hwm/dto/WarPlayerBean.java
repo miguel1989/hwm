@@ -1,6 +1,7 @@
 package hwm.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.creatures.Peasant;
 import hwm.domain.ArmyEntity;
 import hwm.domain.BotPlayerEntity;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WarPlayerBean {
+	@JsonIgnore
+	public WarBean war;
 
 	public String id;
 	public String name;
@@ -46,6 +49,7 @@ public class WarPlayerBean {
 		ArmyEntity army = playerEntity.currentArmy();
 		//todo complex logic to find out is it a peasant or a peasantUp
 		Peasant peasant = new Peasant(army.getLevel1Count());
+		creatures.add(new WarCreatureBean(playerEntity));
 		creatures.add(new WarCreatureBean(peasant, finalParamsFromPlayer));
 	}
 
@@ -54,7 +58,6 @@ public class WarPlayerBean {
 		this.name = botPlayerEntity.getName();
 		this.hasHero = false;
 
-		//todo think how to add +1 morale only to alive creatures
 		this.creatures = botPlayerEntity.creatures()
 				.stream()
 				.map(CreatureEntity::toSimpleCreature)
@@ -62,14 +65,23 @@ public class WarPlayerBean {
 				.collect(Collectors.toList());
 	}
 
-	public void defaultPositionForCreatures(TeamType teamType, BoardBean boardBean) {
-		int i = 0;
+	public void defaultPositionForCreatures(TeamType teamType, int playerIndexInTheTeam, int availableHeightForPlayer) {
+		int startY = playerIndexInTheTeam * availableHeightForPlayer;
+		int endXY = ((playerIndexInTheTeam + 1) + availableHeightForPlayer) - 1;
+		int count = 0;
 		//todo take into account warType, GV -> place user in center
-		for (WarCreatureBean warCreatureBean: this.creatures) {
-			int tmpX = TeamType.RED.equals(teamType) ? 0 : boardBean.width;
-			int tmpY = i;//todo take into account creature SIZE
+		for (WarCreatureBean warCreatureBean : this.creatures) {
+			if (warCreatureBean.isHero) {
+				warCreatureBean.x = TeamType.RED.equals(teamType) ? -1 : war.boardBean.width + 1;
+				warCreatureBean.y = startY;
+				continue;
+			}
+
+			int tmpX = TeamType.RED.equals(teamType) ? 0 : war.boardBean.width;
+			int tmpY = startY + count;//todo take into account creature SIZE
 			warCreatureBean.x = tmpX;
 			warCreatureBean.y = tmpY;
+			count++;
 		}
 
 	}

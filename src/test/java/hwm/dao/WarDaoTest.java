@@ -64,7 +64,7 @@ public class WarDaoTest {
 		BotPlayerEntity botPlayer = createBot();
 
 		WarBean warBean = new WarBean(WarType.HUNT);
-		warBean.boardBean = new BoardBean(10, 10);
+		warBean.boardBean = new BoardBean(12, 12);
 
 		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1);
 		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer);
@@ -98,24 +98,30 @@ public class WarDaoTest {
 //		assertEquals(player1.getName(), WarPlayerBean.name);
 		assertTrue(playerBean.hasHero);
 		assertEquals(Faction.Knight, playerBean.faction);
-		assertEquals(1, playerBean.creatures.size());
-		assertEquals("Peasant", playerBean.creatures.get(0).name);
-		assertEquals(30, playerBean.creatures.get(0).count);
-		assertEquals(30, playerBean.creatures.get(0).currentCount);
+		assertEquals(2, playerBean.creatures.size());
 
-		assertEquals(10, playerBean.creatures.get(0).paramsFinal.attack);
-		assertEquals(9, playerBean.creatures.get(0).paramsFinal.defence);
-		assertEquals(1, playerBean.creatures.get(0).paramsFinal.minDamage);
-		assertEquals(1, playerBean.creatures.get(0).paramsFinal.maxDamage);
-		assertEquals(4, playerBean.creatures.get(0).paramsFinal.hp);
-		assertEquals(4, playerBean.creatures.get(0).paramsFinal.speed);
-		assertEquals("8.4", playerBean.creatures.get(0).paramsFinal.initiative.toString());
-		assertEquals(0, playerBean.creatures.get(0).paramsFinal.shots);
-		assertEquals(0, playerBean.creatures.get(0).paramsFinal.range);
-		assertEquals(0, playerBean.creatures.get(0).paramsFinal.mana);
+		assertEquals("Batman[1]", playerBean.creatures.get(0).name);
+		assertTrue(playerBean.creatures.get(0).isHero);
+		assertEquals("10", playerBean.creatures.get(0).paramsFinal.initiative.toString());
 
-		assertEquals(5, playerBean.creatures.get(0).paramsFinal.luck);
-		assertEquals(5, playerBean.creatures.get(0).paramsFinal.morale);
+		assertEquals("Peasant", playerBean.creatures.get(1).name);
+		assertFalse(playerBean.creatures.get(1).isHero);
+		assertEquals(30, playerBean.creatures.get(1).count);
+		assertEquals(30, playerBean.creatures.get(1).currentCount);
+
+		assertEquals(10, playerBean.creatures.get(1).paramsFinal.attack);
+		assertEquals(9, playerBean.creatures.get(1).paramsFinal.defence);
+		assertEquals(1, playerBean.creatures.get(1).paramsFinal.minDamage);
+		assertEquals(1, playerBean.creatures.get(1).paramsFinal.maxDamage);
+		assertEquals(4, playerBean.creatures.get(1).paramsFinal.hp);
+		assertEquals(4, playerBean.creatures.get(1).paramsFinal.speed);
+		assertEquals("8.4", playerBean.creatures.get(1).paramsFinal.initiative.toString());
+		assertEquals(0, playerBean.creatures.get(1).paramsFinal.shots);
+		assertEquals(0, playerBean.creatures.get(1).paramsFinal.range);
+		assertEquals(0, playerBean.creatures.get(1).paramsFinal.mana);
+
+		assertEquals(5, playerBean.creatures.get(1).paramsFinal.luck);
+		assertEquals(5, playerBean.creatures.get(1).paramsFinal.morale);
 	}
 
 	private void checkBotBean(WarPlayerBean botBean) {
