@@ -12,6 +12,9 @@ public class WarBean {
 	public WarType type;
 	public BoardBean boardBean;
 
+	public int turnTimeOut = 0;
+	public int preparationTimeOut = 0;
+
 	public TeamBean redTeam = new TeamBean(this, TeamType.RED);
 	public TeamBean blueTeam = new TeamBean(this, TeamType.BLUE);
 

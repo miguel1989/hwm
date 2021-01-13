@@ -82,6 +82,9 @@ public class WarDaoTest {
 
 		WarEntity warEntity = new WarEntity();
 		warEntity.setType(warBean.type);
+		warEntity.setPreparationTimeOut(warBean.preparationTimeOut);
+		warEntity.setTurnTimeOut(warBean.turnTimeOut);
+
 		warBean.redTeam.players.forEach(it -> warEntity.addRedTeamPlayer(it.id));
 		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
 		warEntityDao.save(warEntity);
