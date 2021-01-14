@@ -45,30 +45,33 @@ public class WarEntity extends BaseEntity {
 	@Column(name = "preparation_timeout")
 	int preparationTimeOut = 0;
 
-	@Getter
-	@Setter
-	@Column(name = "initial_json")
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	String initialJson;
-
-	//todo somekind of snapshot for the users in the battle
-
 	@OneToMany(mappedBy = "warEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	final Set<WarTeamEntity> warTeams = new HashSet<>();
+	final Set<WarTeamEntity> teams = new HashSet<>();
 
-	public Collection<WarTeamEntity> warTeams() {
-		return ImmutableSet.copyOf(warTeams);
+	@OneToMany(mappedBy = "warEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	final Set<WarHistoryEntity> history = new HashSet<>();
+
+	public Collection<WarTeamEntity> teams() {
+		return ImmutableSet.copyOf(teams);
 	}
 
-	public void addRedTeamPlayer(String id) {
-		WarTeamEntity warTeamEntity = new WarTeamEntity(this, TeamType.RED, PlayerType.HUMAN, id);
-		this.warTeams.add(warTeamEntity);
+	public Collection<WarHistoryEntity> history() {
+		return ImmutableSet.copyOf(history);
 	}
 
-	public void addBlueTeamPlayer(String id) {
-		WarTeamEntity warTeamEntity = new WarTeamEntity(this, TeamType.BLUE, PlayerType.BOT, id);
-		this.warTeams.add(warTeamEntity);
+	public void addRedTeamPlayer(String playerId) {
+		WarTeamEntity warTeamEntity = new WarTeamEntity(this, TeamType.RED, PlayerType.HUMAN, playerId);
+		this.teams.add(warTeamEntity);
+	}
+
+	public void addBlueTeamPlayer(String playerId) {
+		WarTeamEntity warTeamEntity = new WarTeamEntity(this, TeamType.BLUE, PlayerType.BOT, playerId);
+		this.teams.add(warTeamEntity);
+	}
+
+	public void addHistory(String json) {
+		WarHistoryEntity warHistoryEntity = new WarHistoryEntity(this, json);
+		this.history.add(warHistoryEntity);
 	}
 
 	public void start() {

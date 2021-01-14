@@ -2,15 +2,13 @@ package hwm.dao;
 
 import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
-import hwm.creatures.Peasant;
 import hwm.domain.*;
-import hwm.dto.BoardBean;
-import hwm.dto.TeamBean;
 import hwm.dto.WarBean;
 import hwm.dto.WarPlayerBean;
 import hwm.enums.Faction;
 import hwm.enums.TeamType;
-import hwm.enums.WarType;
+import hwm.enums.WarStatus;
+import hwm.service.WarHuntService;
 import hwm.util.JacksonJsonSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,8 +37,11 @@ public class WarDaoTest {
 	ArtifactEntityDao artifactEntityDao;
 	@Autowired
 	WarEntityDao warEntityDao;
+	@Autowired
+	WarHistoryEntityDao warHistoryEntityDao;
 
 	JacksonJsonSerializer jacksonJsonSerializer = new JacksonJsonSerializer();
+	WarHuntService warHuntService;
 
 	@BeforeEach
 	public void setup() {
@@ -46,6 +49,8 @@ public class WarDaoTest {
 		playerEntityDao.deleteAll();
 		artifactEntityDao.deleteAll();
 		warEntityDao.deleteAll();
+
+		warHuntService = new WarHuntService(playerEntityDao, botPlayerDao, warEntityDao, warHistoryEntityDao, jacksonJsonSerializer);
 	}
 
 	@AfterEach
@@ -61,48 +66,25 @@ public class WarDaoTest {
 		PlayerEntity player1 = createSimplePlayer();
 		putOnArtifacts(player1);
 
-		BotPlayerEntity botPlayer = createBot();
-
-		WarBean warBean = new WarBean(WarType.HUNT);
-		warBean.boardBean = new BoardBean(12, 12);
-
-		WarPlayerBean warPlayerBean1 = new WarPlayerBean(player1);
-		WarPlayerBean warPlayerBean2 = new WarPlayerBean(botPlayer);
-
-		warBean.redTeam.addPlayer(warPlayerBean1);
-		warBean.blueTeam.addPlayer(warPlayerBean2);
-
-		warBean.beforeBattlePreparation();
-
-		String initialJson = jacksonJsonSerializer.toJson(warBean);
-		System.out.println(initialJson);
-
-		WarBean restoredWarBean = jacksonJsonSerializer.restoreWar(initialJson);
-
-		checkPlayerBean(warPlayerBean1);
-		checkBotBean(warPlayerBean2);
+		String warId = warHuntService.create(player1.id().toString());
+		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
+		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarEntityOrderByCreatedAtDesc(warEntity);
+		WarBean warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 
 
-		WarEntity warEntity = new WarEntity();
-		warEntity.setType(warBean.type);
-		warEntity.setPreparationTimeOut(warBean.preparationTimeOut);
-		warEntity.setTurnTimeOut(warBean.turnTimeOut);
-		warEntity.setInitialJson(initialJson);
-
-		warBean.redTeam.players.forEach(it -> warEntity.addRedTeamPlayer(it.id));
-		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
-		warEntityDao.save(warEntity);
+		checkPlayerBean(warBean.redTeam.players.get(0));
+		checkBotBean(warBean.blueTeam.players.get(0));
 
 		//todo later on this should be done with cron and/or after player completes his preparation
-		warEntity.start();
-		warEntityDao.save(warEntity);
+		warHuntService.start(warId);
 
 		Page<WarEntity> page = warEntityDao.findAll(pageable);
 		assertEquals(1L, page.getTotalElements());
 		assertEquals(1, page.getContent().size());
-		assertEquals(2, page.getContent().get(0).warTeams().size());
-		assertTrue(page.getContent().get(0).warTeams().stream().anyMatch(it-> it.getType().equals(TeamType.RED)));
-		assertTrue(page.getContent().get(0).warTeams().stream().anyMatch(it-> it.getType().equals(TeamType.BLUE)));
+		assertEquals(2, page.getContent().get(0).teams().size());
+		assertEquals(WarStatus.STARTED, page.getContent().get(0).getStatus());
+		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.RED)));
+		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.BLUE)));
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {
@@ -197,18 +179,5 @@ public class WarDaoTest {
 		assertTrue(player1.putOnArtifact(earring2.id().toString()));
 		assertTrue(player1.putOnArtifact(axe1.id().toString()));
 		playerEntityDao.save(player1);
-	}
-
-	private BotPlayerEntity createBot() {
-		Peasant peasant = new Peasant(10);
-
-		BotPlayerEntity botPlayer = new BotPlayerEntity();
-		botPlayer.setName(peasant.name + " (" + peasant.count + ")");
-
-		CreatureEntity creatureEntity = new CreatureEntity(botPlayer, peasant);
-		botPlayer.addCreature(creatureEntity);
-		botPlayerDao.save(botPlayer);
-
-		return botPlayer;
 	}
 }
