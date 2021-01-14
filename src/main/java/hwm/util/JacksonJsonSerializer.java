@@ -2,6 +2,7 @@ package hwm.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hwm.dto.WarBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -34,9 +35,23 @@ public class JacksonJsonSerializer {
 	public Object fromJson(String jsonString, Class resultClass) {
 		try {
 			return om.readValue(jsonString, resultClass);
-		} catch (Exception e) {
-			LOG.error("Failed to deserialize from Json {}", jsonString, e);
+		} catch (Exception ex) {
+			LOG.error("Failed to deserialize from Json {}", jsonString, ex);
 		}
 		return null;
+	}
+
+	public WarBean restoreWar(String jsonString) {
+		try {
+			WarBean warBean = om.readValue(jsonString, WarBean.class);
+			warBean.redTeam.war = warBean;
+			warBean.blueTeam.war = warBean;
+			warBean.redTeam.players.forEach(it -> it.war = warBean);
+			warBean.blueTeam.players.forEach(it -> it.war = warBean);
+			return warBean;
+		} catch (Exception ex) {
+			LOG.error("Failed to deserialize from Json {}", jsonString, ex);
+			throw new RuntimeException(ex);
+		}
 	}
 }

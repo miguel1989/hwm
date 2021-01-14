@@ -10,12 +10,14 @@ import hwm.domain.PlayerEntity;
 import hwm.enums.Faction;
 import hwm.enums.TeamType;
 import hwm.tables.SkillTable;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class WarPlayerBean {
 	@JsonIgnore
 	public WarBean war;
@@ -67,7 +69,7 @@ public class WarPlayerBean {
 
 	public void defaultPositionForCreatures(TeamType teamType, int playerIndexInTheTeam, int availableHeightForPlayer) {
 		int startY = playerIndexInTheTeam * availableHeightForPlayer;
-		int endXY = ((playerIndexInTheTeam + 1) + availableHeightForPlayer) - 1;
+		int endY = ((playerIndexInTheTeam + 1) + availableHeightForPlayer) - 1;
 		int count = 0;
 		//todo take into account warType, GV -> place user in center
 		for (WarCreatureBean warCreatureBean : this.creatures) {
@@ -77,7 +79,7 @@ public class WarPlayerBean {
 				continue;
 			}
 
-			int tmpX = TeamType.RED.equals(teamType) ? 0 : war.boardBean.width;
+			int tmpX = TeamType.RED.equals(teamType) ? 0 : war.boardBean.width - 1;
 			int tmpY = startY + count;//todo take into account creature SIZE
 			warCreatureBean.x = tmpX;
 			warCreatureBean.y = tmpY;

@@ -2,15 +2,17 @@ package hwm.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.enums.TeamType;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class TeamBean {
 	@JsonIgnore
-	public final WarBean war;
-	public final TeamType type;
+	public WarBean war;
+	public TeamType type;
 	public List<WarPlayerBean> players = new ArrayList<>(4);
 
 	public TeamBean(WarBean war, TeamType type) {

@@ -5,11 +5,13 @@ import hwm.creature.SimpleCreature;
 import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
 import hwm.util.BigDecimalUtils;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Random;
 import java.util.UUID;
 
+@NoArgsConstructor //default constructor for jackson
 public class WarCreatureBean {
 	static final BigDecimal MAX_ATB = new BigDecimal(100);
 	static final Random random = new Random();

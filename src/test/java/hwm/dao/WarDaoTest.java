@@ -77,6 +77,8 @@ public class WarDaoTest {
 		String initialJson = jacksonJsonSerializer.toJson(warBean);
 		System.out.println(initialJson);
 
+		WarBean restoredWarBean = jacksonJsonSerializer.restoreWar(initialJson);
+
 		checkPlayerBean(warPlayerBean1);
 		checkBotBean(warPlayerBean2);
 
@@ -91,7 +93,7 @@ public class WarDaoTest {
 		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
 		warEntityDao.save(warEntity);
 
-		//todo later on this should be done with cron and/or after completes his preparation
+		//todo later on this should be done with cron and/or after player completes his preparation
 		warEntity.start();
 		warEntityDao.save(warEntity);
 
