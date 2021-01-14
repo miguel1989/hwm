@@ -68,7 +68,7 @@ public class WarDaoTest {
 
 		String warId = warHuntService.create(player1.id().toString());
 		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
-		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarEntityOrderByCreatedAtDesc(warEntity);
+		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
 		WarBean warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 
 

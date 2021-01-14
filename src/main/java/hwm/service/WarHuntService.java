@@ -44,10 +44,13 @@ public class WarHuntService {
 		warEntity.setType(warBean.type);
 		warEntity.setPreparationTimeOut(warBean.preparationTimeOut);
 		warEntity.setTurnTimeOut(warBean.turnTimeOut);
-		warEntity.addHistory(initialJson);
+//		warEntity.addHistory(initialJson);
 		warBean.redTeam.players.forEach(it -> warEntity.addRedTeamPlayer(it.id));
 		warBean.blueTeam.players.forEach(it -> warEntity.addBlueTeamPlayer(it.id));
 		warEntityDao.save(warEntity);
+
+		WarHistoryEntity historyEntity = new WarHistoryEntity(warEntity.id(), initialJson);
+		warHistoryEntityDao.save(historyEntity);
 
 		return warEntity.id().toString();
 	}
@@ -55,13 +58,16 @@ public class WarHuntService {
 	public void start(String warId) {
 		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
 
-		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarEntityOrderByCreatedAtDesc(warEntity);
+		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
 
 		WarBean warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 		warEntity.start();
 		warBean.findNextCreaturesToMove();
-		warEntity.addHistory(jacksonJsonSerializer.toJson(warBean));
+//		warEntity.addHistory(jacksonJsonSerializer.toJson(warBean));
 		warEntityDao.save(warEntity);
+
+		WarHistoryEntity historyEntity = new WarHistoryEntity(warEntity.id(), jacksonJsonSerializer.toJson(warBean));
+		warHistoryEntityDao.save(historyEntity);
 	}
 
 	private BotPlayerEntity createBot() {
