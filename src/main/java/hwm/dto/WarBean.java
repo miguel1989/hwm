@@ -47,9 +47,9 @@ public class WarBean {
 	}
 
 	public void findNextCreaturesToMove() {
-		do {
+		while (nextCreaturesToMove == null || nextCreaturesToMove.isEmpty()) {
 			nextCreaturesToMove = atbTick();
-		} while (nextCreaturesToMove.isEmpty());
+		}
 		lastActionTimeStamp = LocalDateTime.now();
 	}
 

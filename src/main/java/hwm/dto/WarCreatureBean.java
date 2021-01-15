@@ -1,6 +1,7 @@
 package hwm.dto;
 
 import com.datastax.driver.core.utils.UUIDs;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.creature.SimpleCreature;
 import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
@@ -13,7 +14,11 @@ import java.util.UUID;
 
 @NoArgsConstructor //default constructor for jackson
 public class WarCreatureBean {
+	@JsonIgnore
+	public WarPlayerBean player;
+
 	static final BigDecimal MAX_ATB = new BigDecimal(100);
+	static final BigDecimal WAIT_ATB = new BigDecimal(50);
 	static final Random random = new Random();
 
 	public final UUID id = UUIDs.timeBased();
@@ -29,7 +34,8 @@ public class WarCreatureBean {
 	public BaseCreatureParamsBean paramsInitial = new BaseCreatureParamsBean();
 	public BaseCreatureParamsBean paramsFinal = new BaseCreatureParamsBean();
 
-	public WarCreatureBean(SimpleCreature simpleCreature, BaseParamsBean paramsFromPlayer) {
+	public WarCreatureBean(WarPlayerBean player, SimpleCreature simpleCreature, BaseParamsBean paramsFromPlayer) {
+		this.player = player;
 		this.name = simpleCreature.name;
 		this.count = simpleCreature.count; //todo perks can add count
 		this.currentCount = simpleCreature.count; //todo perks can add count
@@ -51,7 +57,8 @@ public class WarCreatureBean {
 		this.addPlayerParams(paramsFromPlayer);
 	}
 
-	public WarCreatureBean(PlayerEntity playerEntity) {
+	public WarCreatureBean(WarPlayerBean player, PlayerEntity playerEntity) {
+		this.player = player;
 		this.name = playerEntity.getName() + "[" + playerEntity.getLevel() + "]";
 		this.count = 1;
 		this.currentCount = 1;
@@ -99,6 +106,10 @@ public class WarCreatureBean {
 
 	public boolean isReadyToMakeTurn() {
 		return this.currentATB.compareTo(MAX_ATB) >= 0;
+	}
+
+	public void await() {
+		this.currentATB = BigDecimalUtils.subtract(this.currentATB, WAIT_ATB);
 	}
 
 	public void afterTurn() {

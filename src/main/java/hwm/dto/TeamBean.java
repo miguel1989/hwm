@@ -22,13 +22,14 @@ public class TeamBean {
 
 	public void addPlayer(WarPlayerBean warPlayerBean) {
 		warPlayerBean.war = war;
+		warPlayerBean.team = type;
 		players.add(warPlayerBean);
 	}
 
 	public void beforeBattlePreparation() {
 		int availableHeightForPlayer = war.boardBean.height / this.players.size();
 		for (int i = 0 ; i< this.players.size(); i++) {
-			players.get(i).defaultPositionForCreatures(type, i, availableHeightForPlayer);
+			players.get(i).defaultPositionForCreatures(i, availableHeightForPlayer);
 		}
 	}
 

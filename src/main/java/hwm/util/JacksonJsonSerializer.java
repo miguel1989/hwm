@@ -3,6 +3,9 @@ package hwm.util;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hwm.dto.WarBean;
+import hwm.dto.WarCreatureBean;
+import hwm.dto.WarPlayerBean;
+import hwm.enums.TeamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -46,12 +49,37 @@ public class JacksonJsonSerializer {
 			WarBean warBean = om.readValue(jsonString, WarBean.class);
 			warBean.redTeam.war = warBean;
 			warBean.blueTeam.war = warBean;
-			warBean.redTeam.players.forEach(it -> it.war = warBean);
-			warBean.blueTeam.players.forEach(it -> it.war = warBean);
+			warBean.redTeam.players.forEach(player -> {
+				player.war = warBean;
+				player.team = TeamType.RED;
+				player.creatures.forEach(creature -> {
+					creature.player = player;
+					populatePlayerForNextCreatures(warBean, player, creature);
+				});
+			});
+			warBean.blueTeam.players.forEach(player -> {
+				player.war = warBean;
+				player.team = TeamType.BLUE;
+				player.creatures.forEach(creature -> {
+					creature.player = player;
+					populatePlayerForNextCreatures(warBean, player, creature);
+				});
+			});
+
 			return warBean;
 		} catch (Exception ex) {
 			LOG.error("Failed to deserialize from Json {}", jsonString, ex);
 			throw new RuntimeException(ex);
+		}
+	}
+
+	public void populatePlayerForNextCreatures(WarBean warBean, WarPlayerBean player, WarCreatureBean creature) {
+		if (warBean.nextCreaturesToMove != null) {
+			warBean.nextCreaturesToMove.forEach(tmpCreature -> {
+				if (tmpCreature.id.equals(creature.id)) {
+					tmpCreature.player = player;
+				}
+			});
 		}
 	}
 }

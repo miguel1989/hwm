@@ -3,6 +3,7 @@ package hwm.dao;
 import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
 import hwm.domain.*;
+import hwm.dto.TurnBean;
 import hwm.dto.WarBean;
 import hwm.dto.WarPlayerBean;
 import hwm.enums.Faction;
@@ -85,6 +86,12 @@ public class WarDaoTest {
 		assertEquals(WarStatus.STARTED, page.getContent().get(0).getStatus());
 		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.RED)));
 		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.BLUE)));
+
+		/////////////////////////// attempt to wait by hero
+		lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
+		warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
+
+		warHuntService.playerTurn(warId, TurnBean.await(player1.id().toString(), warBean.nextCreaturesToMove.get(0).id.toString()));
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {
