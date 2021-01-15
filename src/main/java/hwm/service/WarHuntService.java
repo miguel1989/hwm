@@ -6,9 +6,8 @@ import hwm.dao.PlayerEntityDao;
 import hwm.dao.WarEntityDao;
 import hwm.dao.WarHistoryEntityDao;
 import hwm.domain.*;
-import hwm.dto.BoardBean;
-import hwm.dto.WarBean;
-import hwm.dto.WarPlayerBean;
+import hwm.dto.*;
+import hwm.enums.TurnType;
 import hwm.enums.WarType;
 import hwm.util.JacksonJsonSerializer;
 import lombok.AllArgsConstructor;
@@ -68,6 +67,49 @@ public class WarHuntService {
 
 		WarHistoryEntity historyEntity = new WarHistoryEntity(warEntity.id(), jacksonJsonSerializer.toJson(warBean));
 		warHistoryEntityDao.save(historyEntity);
+	}
+
+	public boolean playerTurn(String warId, TurnBean turnBean) {
+		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
+		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
+		WarBean warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
+
+		if (warEntity.isNotStarted()) {
+			return false;
+		}
+		if (warBean.nextCreaturesToMove.isEmpty()) {
+			return false;
+		}
+		boolean isNotInRedTeam = warBean.redTeam.players.stream().noneMatch(it -> it.id.equals(turnBean.playerId));
+		boolean isNotInBlueTeam = warBean.blueTeam.players.stream().noneMatch(it -> it.id.equals(turnBean.playerId));
+		if (isNotInRedTeam && isNotInBlueTeam) {
+			return false;
+		}
+
+		//wrong creature to move
+		if (!warBean.nextCreaturesToMove.get(0).id.toString().equals(turnBean.creatureId)) {
+			return false;
+		}
+		//wrong player turn
+		if (!warBean.nextCreaturesToMove.get(0).player.id.equals(turnBean.playerId)) {
+			return false;
+		}
+
+		WarCreatureBean creatureForTurn = warBean.nextCreaturesToMove.remove(0);
+		//todo other checks for creature that it can make that turn
+
+		if (turnBean.type.equals(TurnType.WAIT)) {
+			WarCreatureBean creature = warBean.allCreatures().stream()
+					.filter(tmpCreature -> tmpCreature.id.equals(creatureForTurn.id))
+					.findFirst().get();
+			creature.await();
+			//add action log
+		}
+
+		warBean.findNextCreaturesToMove();
+		WarHistoryEntity historyEntity = new WarHistoryEntity(warEntity.id(), jacksonJsonSerializer.toJson(warBean));
+		warHistoryEntityDao.save(historyEntity);
+		return true;
 	}
 
 	private BotPlayerEntity createBot() {

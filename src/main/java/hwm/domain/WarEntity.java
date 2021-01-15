@@ -79,4 +79,8 @@ public class WarEntity extends BaseEntity {
 		this.status = WarStatus.STARTED;
 		this.startedAt = LocalDateTime.now();
 	}
+
+	public boolean isNotStarted() {
+		return !WarStatus.STARTED.equals(this.status);
+	}
 }
