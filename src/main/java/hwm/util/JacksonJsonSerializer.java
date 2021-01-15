@@ -1,5 +1,6 @@
 package hwm.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hwm.dto.WarBean;
@@ -24,7 +25,9 @@ public class JacksonJsonSerializer {
 //			.featuresToDisable(SerializationFeature.WRITE_NULL_MAP_VALUES)
 			.featuresToDisable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
 			.failOnEmptyBeans(false)
-			.build().setDateFormat(df);
+			.build()
+			.setDateFormat(df)
+			.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
 	public String toJson(Object object) {
 		try {
