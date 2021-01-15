@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class WarPlayerBean {
 	@JsonIgnore
 	public WarBean war;
+	public TeamType team;
 
 	public String id;
 	public String name;
@@ -51,8 +52,8 @@ public class WarPlayerBean {
 		ArmyEntity army = playerEntity.currentArmy();
 		//todo complex logic to find out is it a peasant or a peasantUp
 		Peasant peasant = new Peasant(army.getLevel1Count());
-		creatures.add(new WarCreatureBean(playerEntity));
-		creatures.add(new WarCreatureBean(peasant, finalParamsFromPlayer));
+		creatures.add(new WarCreatureBean(this, playerEntity));
+		creatures.add(new WarCreatureBean(this, peasant, finalParamsFromPlayer));
 	}
 
 	public WarPlayerBean(BotPlayerEntity botPlayerEntity) {
@@ -63,23 +64,23 @@ public class WarPlayerBean {
 		this.creatures = botPlayerEntity.creatures()
 				.stream()
 				.map(CreatureEntity::toSimpleCreature)
-				.map(it -> new WarCreatureBean(it, new BaseParamsBean()))
+				.map(it -> new WarCreatureBean(this, it, new BaseParamsBean()))
 				.collect(Collectors.toList());
 	}
 
-	public void defaultPositionForCreatures(TeamType teamType, int playerIndexInTheTeam, int availableHeightForPlayer) {
+	public void defaultPositionForCreatures(int playerIndexInTheTeam, int availableHeightForPlayer) {
 		int startY = playerIndexInTheTeam * availableHeightForPlayer;
 		int endY = ((playerIndexInTheTeam + 1) + availableHeightForPlayer) - 1;
 		int count = 0;
 		//todo take into account warType, GV -> place user in center
 		for (WarCreatureBean warCreatureBean : this.creatures) {
 			if (warCreatureBean.isHero) {
-				warCreatureBean.x = TeamType.RED.equals(teamType) ? -1 : war.boardBean.width + 1;
+				warCreatureBean.x = TeamType.RED.equals(team) ? -1 : war.boardBean.width + 1;
 				warCreatureBean.y = startY;
 				continue;
 			}
 
-			int tmpX = TeamType.RED.equals(teamType) ? 0 : war.boardBean.width - 1;
+			int tmpX = TeamType.RED.equals(team) ? 0 : war.boardBean.width - 1;
 			int tmpY = startY + count;//todo take into account creature SIZE
 			warCreatureBean.x = tmpX;
 			warCreatureBean.y = tmpY;
