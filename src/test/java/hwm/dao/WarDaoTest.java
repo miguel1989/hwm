@@ -111,6 +111,16 @@ public class WarDaoTest {
 
 		Collection<WarActionLogEntity> warActions = warActionLogEntityDao.findAllByWarIdOrderByCreatedAt(warEntity.id());
 		assertEquals(2, warActions.size());
+
+		/////////////////////////// attempt to move the neutral peasant -> creature can not move there
+		turnResult = warHuntService.playerTurn(warId,
+				TurnBean.move(
+						warBean.blueTeam.players.get(0).id,
+						warBean.blueTeam.players.get(0).creatures.get(0).id.toString(),
+						0,
+						0
+				));
+		assertFalse(turnResult);
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {

@@ -6,8 +6,14 @@ import hwm.domain.*;
 import hwm.dto.*;
 import hwm.enums.TurnType;
 import hwm.enums.WarType;
+import hwm.game.AvailableMoves;
+import hwm.game.AvailableMovesList;
+import hwm.game.Point;
+import hwm.game.SimpleBoard;
 import hwm.util.JacksonJsonSerializer;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -21,6 +27,8 @@ public class WarHuntService {
 	private final WarHistoryEntityDao warHistoryEntityDao;
 	private final WarActionLogEntityDao warActionLogEntityDao;
 	private final JacksonJsonSerializer jacksonJsonSerializer;
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
 
 	public String create(String playerId) {
 		PlayerEntity playerEntity = playerEntityDao.findById(UUID.fromString(playerId)).get();
@@ -53,6 +61,7 @@ public class WarHuntService {
 	}
 
 	public void start(String warId) {
+		LOG.info("Start war with warId = {}", warId);
 		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
 
 		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
@@ -68,28 +77,35 @@ public class WarHuntService {
 	}
 
 	public boolean playerTurn(String warId, TurnBean turnBean) {
+		LOG.info("PlayerTurn warId = {}, turnBean = {}", warId, turnBean);
+
 		WarEntity warEntity = warEntityDao.findById(UUID.fromString(warId)).get();
 		WarHistoryEntity lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
 		WarBean warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 
 		if (warEntity.isNotStarted()) {
+			LOG.warn("War is not started, warId = {}", warId);
 			return false;
 		}
 		if (warBean.nextCreaturesToMove.isEmpty()) {
+			LOG.warn("No creatures to move, warId = {}", warId);
 			return false;
 		}
 		boolean isNotInRedTeam = warBean.redTeam.players.stream().noneMatch(it -> it.id.equals(turnBean.playerId));
 		boolean isNotInBlueTeam = warBean.blueTeam.players.stream().noneMatch(it -> it.id.equals(turnBean.playerId));
 		if (isNotInRedTeam && isNotInBlueTeam) {
+			LOG.warn("PlayerId = {} does not belong to this war, warId = {}", turnBean.playerId, warId);
 			return false;
 		}
 
 		//wrong creature to move
 		if (!warBean.nextCreaturesToMove.get(0).id.toString().equals(turnBean.creatureId)) {
+			LOG.warn("It is not the creatureId = {} turn, warId = {}", turnBean.creatureId, warId);
 			return false;
 		}
 		//wrong player turn
 		if (!warBean.nextCreaturesToMove.get(0).player.id.equals(turnBean.playerId)) {
+			LOG.warn("Creatures.playerId does not match, warId = {}", warId);
 			return false;
 		}
 
@@ -112,6 +128,22 @@ public class WarHuntService {
 		}
 
 		if (TurnType.MOVE.equals(turnBean.type)) {
+			if (creatureForTurn.isHero) {
+				LOG.warn("Hero({}) with id = {} can not make a move warId = {}", creatureForTurn.name, creatureForTurn.id.toString(), warId);
+				return false;
+			}
+			//0. check that we can move there
+			SimpleBoard simpleBoard = warBean.boardBean.toSimpleBoard();
+			AvailableMoves availableMoves = new AvailableMoves(creatureForTurn, simpleBoard);
+			availableMoves.calc();
+			AvailableMovesList movesList = availableMoves.movesList();
+			if (!movesList.contains(new Point(turnBean.x, turnBean.y))) {
+				LOG.warn("Creature({}) with id = {} can not move there warId = {}",
+						creatureForTurn.name,
+						creatureForTurn.id.toString(),
+						warId);
+				return false;
+			}
 			//1. generate move path
 			//2. make a subAction to move one by one cell
 		}

@@ -37,4 +37,17 @@ public class TurnBean {
 		turnBean.y = y;
 		return turnBean;
 	}
+
+	@Override
+	public String toString() {
+		return "TurnBean{" +
+				"playerId='" + playerId + '\'' +
+				", creatureId='" + creatureId + '\'' +
+				", type=" + type +
+				", x=" + x +
+				", y=" + y +
+				", moveX=" + moveX +
+				", moveY=" + moveY +
+				'}';
+	}
 }
