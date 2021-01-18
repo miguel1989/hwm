@@ -19,4 +19,12 @@ public class TurnBean {
 		turnBean.type = TurnType.WAIT;
 		return turnBean;
 	}
+
+	public static TurnBean defence(String playerId, String creatureId) {
+		TurnBean turnBean = new TurnBean();
+		turnBean.playerId = playerId;
+		turnBean.creatureId = creatureId;
+		turnBean.type = TurnType.DEFENCE;
+		return turnBean;
+	}
 }
