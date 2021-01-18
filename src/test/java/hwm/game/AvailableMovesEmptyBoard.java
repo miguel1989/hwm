@@ -7,17 +7,13 @@ import org.springframework.util.StopWatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AvailableMovesNoObstaclesTest {
+public class AvailableMovesEmptyBoard {
 
 	@Test
 	public void moveFromTopLeftCorner() {
 		BoardBean boardBean = new BoardBean(6, 6);
 
-		WarCreatureBean warCreatureBean = new WarCreatureBean();
-		warCreatureBean.x = 0;
-		warCreatureBean.y = 0;
-		warCreatureBean.currentCount = 1;
-		warCreatureBean.paramsFinal.speed = 3;
+		WarCreatureBean warCreatureBean = createCreature(0, 0);
 
 		boardBean.addCreature(warCreatureBean);
 
@@ -30,7 +26,6 @@ public class AvailableMovesNoObstaclesTest {
 		sw.stop();
 
 		AvailableMovesList movesList = availableMoves.movesList();
-		System.out.println("----------------------------------------");
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
 		System.out.println(sw.prettyPrint());
@@ -53,11 +48,7 @@ public class AvailableMovesNoObstaclesTest {
 	public void moveFromTopRightCorner() {
 		BoardBean boardBean = new BoardBean(6, 6);
 
-		WarCreatureBean warCreatureBean = new WarCreatureBean();
-		warCreatureBean.x = 5;
-		warCreatureBean.y = 0;
-		warCreatureBean.currentCount = 1;
-		warCreatureBean.paramsFinal.speed = 3;
+		WarCreatureBean warCreatureBean = createCreature(5, 0);
 
 		boardBean.addCreature(warCreatureBean);
 
@@ -66,7 +57,6 @@ public class AvailableMovesNoObstaclesTest {
 		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
-		System.out.println("----------------------------------------");
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
 
@@ -88,11 +78,7 @@ public class AvailableMovesNoObstaclesTest {
 	public void moveFromBottomRightCorner() {
 		BoardBean boardBean = new BoardBean(6, 6);
 
-		WarCreatureBean warCreatureBean = new WarCreatureBean();
-		warCreatureBean.x = 5;
-		warCreatureBean.y = 5;
-		warCreatureBean.currentCount = 1;
-		warCreatureBean.paramsFinal.speed = 3;
+		WarCreatureBean warCreatureBean = createCreature(5, 5);
 
 		boardBean.addCreature(warCreatureBean);
 
@@ -101,7 +87,6 @@ public class AvailableMovesNoObstaclesTest {
 		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
-		System.out.println("----------------------------------------");
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
 
@@ -123,11 +108,7 @@ public class AvailableMovesNoObstaclesTest {
 	public void moveFromBottomLeftCorner() {
 		BoardBean boardBean = new BoardBean(6, 6);
 
-		WarCreatureBean warCreatureBean = new WarCreatureBean();
-		warCreatureBean.x = 0;
-		warCreatureBean.y = 5;
-		warCreatureBean.currentCount = 1;
-		warCreatureBean.paramsFinal.speed = 3;
+		WarCreatureBean warCreatureBean = createCreature(0, 5);
 
 		boardBean.addCreature(warCreatureBean);
 
@@ -136,7 +117,6 @@ public class AvailableMovesNoObstaclesTest {
 		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
-		System.out.println("----------------------------------------");
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
 
@@ -152,5 +132,32 @@ public class AvailableMovesNoObstaclesTest {
 		assertTrue(movesList.contains(new Point(1, 3)));
 		assertTrue(movesList.contains(new Point(2, 3)));
 		assertTrue(movesList.contains(new Point(0, 2)));
+	}
+
+	@Test
+	public void moveFromCenter() {
+		BoardBean boardBean = new BoardBean(7, 7);
+
+		WarCreatureBean warCreatureBean = createCreature(3, 3);
+		boardBean.addCreature(warCreatureBean);
+
+		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
+		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
+		availableMoves.calc();
+
+		AvailableMovesList movesList = availableMoves.movesList();
+		System.out.println(simpleBoard.toStr());
+		System.out.println(movesList);
+
+		assertEquals(28, movesList.size());
+	}
+
+	private WarCreatureBean createCreature(int x, int y) {
+		WarCreatureBean warCreatureBean = new WarCreatureBean();
+		warCreatureBean.x = x;
+		warCreatureBean.y = y;
+		warCreatureBean.currentCount = 1;
+		warCreatureBean.paramsFinal.speed = 3;
+		return warCreatureBean;
 	}
 }
