@@ -93,25 +93,27 @@ public class WarHuntService {
 			return false;
 		}
 
-		WarCreatureBean creatureForTurn = warBean.nextCreaturesToMove.remove(0);
+		WarCreatureBean tmpCreatureForTurn = warBean.nextCreaturesToMove.remove(0);
+		WarCreatureBean creatureForTurn = warBean.allCreatures().stream()
+				.filter(tmpCreature -> tmpCreature.id.equals(tmpCreatureForTurn.id))
+				.findFirst().get();
 		//todo other checks for creature that it can make that turn
 
 		if (TurnType.WAIT.equals(turnBean.type)) {
-			WarCreatureBean creature = warBean.allCreatures().stream()
-					.filter(tmpCreature -> tmpCreature.id.equals(creatureForTurn.id))
-					.findFirst().get();
-			creature.await();
+			creatureForTurn.await();
 
 			warActionLogEntityDao.save(new WarActionLogEntity(warEntity.id(), jacksonJsonSerializer.toJson(turnBean)));
 		}
 
 		if (TurnType.DEFENCE.equals(turnBean.type)) {
-			WarCreatureBean creature = warBean.allCreatures().stream()
-					.filter(tmpCreature -> tmpCreature.id.equals(creatureForTurn.id))
-					.findFirst().get();
-			creature.def();
+			creatureForTurn.def();
 
 			warActionLogEntityDao.save(new WarActionLogEntity(warEntity.id(), jacksonJsonSerializer.toJson(turnBean)));
+		}
+
+		if (TurnType.MOVE.equals(turnBean.type)) {
+			//1. generate move path
+			//2. make a subAction to move one by one cell
 		}
 
 		warBean.findNextCreaturesToMove();

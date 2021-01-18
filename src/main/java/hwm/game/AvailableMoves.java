@@ -4,10 +4,11 @@ import hwm.dto.WarCreatureBean;
 import hwm.enums.SimpleBoardCell;
 
 public class AvailableMoves {
-	private static final int SPEED_POINTS_DIAGONAL = 2;
+	private static final float SPEED_POINTS_DIAGONAL = 1.5f;
 	private static final int SPEED_POINTS_NORMAL = 1;
 
 	private final SimpleBoard simpleBoard;
+	private final AvailableMovesList movesList = new AvailableMovesList();
 
 	private final Integer curX;
 	private final Integer curY;
@@ -26,13 +27,14 @@ public class AvailableMoves {
 		recurCalc(curX, curY, speed);
 	}
 
-	private void recurCalc(int x, int y, int speedPoints) {
+	private void recurCalc(int x, int y, float speedPoints) {
 		if (speedPoints < 0) {
 			return;
 		}
 
 		if (SimpleBoardCell.EMPTY.equals(this.simpleBoard.cells.get(y).get(x))) {
 			this.simpleBoard.cells.get(y).set(x, SimpleBoardCell.AVAILABLE_TO_MOVE);
+			this.movesList.add(new Point(x, y));
 		}
 
 		boolean canMoveLeft = (x - 1) >= 0 && isCellAvailable(this.simpleBoard.cells.get(y).get(x - 1));
@@ -69,5 +71,9 @@ public class AvailableMoves {
 
 	private boolean isCellAvailable(SimpleBoardCell cell) {
 		return SimpleBoardCell.AVAILABLE_TO_MOVE.equals(cell) || SimpleBoardCell.EMPTY.equals(cell);
+	}
+
+	public AvailableMovesList movesList() {
+		return this.movesList;
 	}
 }
