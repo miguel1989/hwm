@@ -21,7 +21,7 @@ public class CellBean {
 		this.creatures.add(creature);
 	}
 
-//	public boolean hasAliveCreature() {
-//		return this.creatures.stream().anyMatch(Creature::isAlive);
-//	}
+	public boolean hasAliveCreatures() {
+		return this.creatures.stream().anyMatch(WarCreatureBean::isAlive);
+	}
 }

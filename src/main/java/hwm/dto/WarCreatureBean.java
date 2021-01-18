@@ -117,6 +117,10 @@ public class WarCreatureBean {
 		this.currentATB = BigDecimalUtils.subtract(this.currentATB, MAX_ATB);
 	}
 
+	public boolean isAlive() {
+		return this.currentCount > 0;
+	}
+
 	public void afterTurn() {
 		//if (this.isTimeToMove())
 		this.currentATB = BigDecimalUtils.subtract(this.currentATB, MAX_ATB);

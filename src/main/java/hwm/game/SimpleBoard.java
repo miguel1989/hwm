@@ -1,16 +1,18 @@
 package hwm.game;
 
+import hwm.dto.CellBean;
 import hwm.enums.SimpleBoardCell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleBoard {
-	private final int width;
-	private final int height;
-	private final List<List<SimpleBoardCell>> cells;
+	public final int width;
+	public final int height;
+	public final List<List<SimpleBoardCell>> cells;
 
-	public SimpleBoard(int width, int height, List<List<Cell>> cells) {
+	public SimpleBoard(int width, int height, List<List<CellBean>> cells) {
 		this.width = width;
 		this.height = height;
 
@@ -18,8 +20,8 @@ public class SimpleBoard {
 		for (int j = 0; j < height; j++) {
 			List<SimpleBoardCell> cellList = new ArrayList<>(width);
 			for (int i = 0; i < width; i++) {
-				Cell originalCell = cells.get(j).get(i);
-				if (originalCell.hasAliveCreature()) {
+				CellBean originalCell = cells.get(j).get(i);
+				if (originalCell.hasAliveCreatures()) {
 					cellList.add(SimpleBoardCell.OBSTACLE);
 				} else {
 					cellList.add(SimpleBoardCell.EMPTY);
@@ -27,5 +29,16 @@ public class SimpleBoard {
 			}
 			this.cells.add(cellList);
 		}
+	}
+
+	public String toStr() {
+		List<String> strList = new ArrayList<>();
+		for (int j = 0; j < height; j++) {
+			List<SimpleBoardCell> cellList = cells.get(j);
+			List<String> tmpStrList = cellList.stream().map(it -> it.name().substring(0, 1)).collect(Collectors.toList());
+			strList.add(String.join(", ", tmpStrList));
+		}
+
+		return String.join("\n", strList);
 	}
 }
