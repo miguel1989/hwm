@@ -2,6 +2,7 @@ package hwm.dao;
 
 import hwm.arts.SimpleAxe;
 import hwm.arts.SimpleEarRing;
+import hwm.arts.SimplePendant;
 import hwm.domain.*;
 import hwm.dto.TurnBean;
 import hwm.dto.WarBean;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +42,8 @@ public class WarDaoTest {
 	WarEntityDao warEntityDao;
 	@Autowired
 	WarHistoryEntityDao warHistoryEntityDao;
+	@Autowired
+	WarActionLogEntityDao warActionLogEntityDao;
 
 	JacksonJsonSerializer jacksonJsonSerializer = new JacksonJsonSerializer();
 	WarHuntService warHuntService;
@@ -51,7 +55,14 @@ public class WarDaoTest {
 		artifactEntityDao.deleteAll();
 		warEntityDao.deleteAll();
 
-		warHuntService = new WarHuntService(playerEntityDao, botPlayerDao, warEntityDao, warHistoryEntityDao, jacksonJsonSerializer);
+		warHuntService = new WarHuntService(
+				playerEntityDao,
+				botPlayerDao,
+				warEntityDao,
+				warHistoryEntityDao,
+				warActionLogEntityDao,
+				jacksonJsonSerializer
+		);
 	}
 
 	@AfterEach
@@ -91,7 +102,15 @@ public class WarDaoTest {
 		lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
 		warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 
-		warHuntService.playerTurn(warId, TurnBean.await(player1.id().toString(), warBean.nextCreaturesToMove.get(0).id.toString()));
+		boolean turnResult = warHuntService.playerTurn(warId, TurnBean.await(player1.id().toString(), warBean.nextCreaturesToMove.get(0).id.toString()));
+		assertTrue(turnResult);
+
+		/////////////////////////// attempt to def by hero.peasant
+		turnResult = warHuntService.playerTurn(warId, TurnBean.defence(player1.id().toString(), warBean.redTeam.players.get(0).creatures.get(1).id.toString()));
+		assertTrue(turnResult);
+
+		Collection<WarActionLogEntity> warActions = warActionLogEntityDao.findAllByWarIdOrderByCreatedAt(warEntity.id());
+		assertEquals(2, warActions.size());
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {
@@ -115,7 +134,7 @@ public class WarDaoTest {
 		assertEquals(1, playerBean.creatures.get(1).paramsFinal.maxDamage);
 		assertEquals(4, playerBean.creatures.get(1).paramsFinal.hp);
 		assertEquals(4, playerBean.creatures.get(1).paramsFinal.speed);
-		assertEquals("8.4", playerBean.creatures.get(1).paramsFinal.initiative.toString());
+		assertEquals("9.9", playerBean.creatures.get(1).paramsFinal.initiative.toString());
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.shots);
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.range);
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.mana);
@@ -171,20 +190,24 @@ public class WarDaoTest {
 	private void putOnArtifacts(PlayerEntity player1) {
 		ArtifactEntity earring1 = new SimpleEarRing().artifact();
 		ArtifactEntity earring2 = new SimpleEarRing().artifact();
-		ArtifactEntity axe1 = new SimpleAxe().artifact();
+		ArtifactEntity axe = new SimpleAxe().artifact();
+		ArtifactEntity pendant = new SimplePendant().artifact();
 		artifactEntityDao.save(earring1);
 		artifactEntityDao.save(earring2);
-		artifactEntityDao.save(axe1);
+		artifactEntityDao.save(axe);
+		artifactEntityDao.save(pendant);
 
 		player1.addArtifact(earring1);
 		player1.addArtifact(earring2);
-		player1.addArtifact(axe1);
+		player1.addArtifact(axe);
+		player1.addArtifact(pendant);
 		playerEntityDao.save(player1);
 
 		//put on all available arts
 		assertTrue(player1.putOnArtifact(earring1.id().toString()));
 		assertTrue(player1.putOnArtifact(earring2.id().toString()));
-		assertTrue(player1.putOnArtifact(axe1.id().toString()));
+		assertTrue(player1.putOnArtifact(axe.id().toString()));
+		assertTrue(player1.putOnArtifact(pendant.id().toString()));
 		playerEntityDao.save(player1);
 	}
 }

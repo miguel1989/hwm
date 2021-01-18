@@ -1,10 +1,7 @@
 package hwm.service;
 
 import hwm.creatures.Peasant;
-import hwm.dao.BotPlayerDao;
-import hwm.dao.PlayerEntityDao;
-import hwm.dao.WarEntityDao;
-import hwm.dao.WarHistoryEntityDao;
+import hwm.dao.*;
 import hwm.domain.*;
 import hwm.dto.*;
 import hwm.enums.TurnType;
@@ -22,6 +19,7 @@ public class WarHuntService {
 	private final BotPlayerDao botPlayerDao;
 	private final WarEntityDao warEntityDao;
 	private final WarHistoryEntityDao warHistoryEntityDao;
+	private final WarActionLogEntityDao warActionLogEntityDao;
 	private final JacksonJsonSerializer jacksonJsonSerializer;
 
 	public String create(String playerId) {
@@ -98,12 +96,22 @@ public class WarHuntService {
 		WarCreatureBean creatureForTurn = warBean.nextCreaturesToMove.remove(0);
 		//todo other checks for creature that it can make that turn
 
-		if (turnBean.type.equals(TurnType.WAIT)) {
+		if (TurnType.WAIT.equals(turnBean.type)) {
 			WarCreatureBean creature = warBean.allCreatures().stream()
 					.filter(tmpCreature -> tmpCreature.id.equals(creatureForTurn.id))
 					.findFirst().get();
 			creature.await();
-			//add action log
+
+			warActionLogEntityDao.save(new WarActionLogEntity(warEntity.id(), jacksonJsonSerializer.toJson(turnBean)));
+		}
+
+		if (TurnType.DEFENCE.equals(turnBean.type)) {
+			WarCreatureBean creature = warBean.allCreatures().stream()
+					.filter(tmpCreature -> tmpCreature.id.equals(creatureForTurn.id))
+					.findFirst().get();
+			creature.def();
+
+			warActionLogEntityDao.save(new WarActionLogEntity(warEntity.id(), jacksonJsonSerializer.toJson(turnBean)));
 		}
 
 		warBean.findNextCreaturesToMove();
