@@ -1,6 +1,7 @@
 package hwm.dto;
 
 import hwm.exceptions.WrongCoordinatesProvided;
+import hwm.game.NumberBoard;
 import hwm.game.SimpleBoard;
 import lombok.NoArgsConstructor;
 
@@ -46,5 +47,9 @@ public class BoardBean {
 
 	public SimpleBoard toSimpleBoard() {
 		return new SimpleBoard(this.width, this.height, this.cells);
+	}
+
+	public NumberBoard toNumberBoard() {
+		return new NumberBoard(this.width, this.height, this.cells);
 	}
 }
