@@ -116,7 +116,7 @@ public class WarHuntService {
 		//todo other checks for creature that it can make that turn
 
 		if (!tmpCreatureForTurn.turnList.contains(turnBean.type)) {
-			LOG.warn("CreatureId = {} can not make this turn({}), warId = {}",turnBean.creatureId, turnBean.type, warId);
+			LOG.warn("CreatureId({}) = {} can not make this turn({}), warId = {}",creatureForTurn.name, turnBean.creatureId, turnBean.type, warId);
 			return false;
 		}
 
