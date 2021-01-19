@@ -22,7 +22,6 @@ public class AvailableMovesEmptyBoard {
 		StopWatch sw = new StopWatch();
 		sw.start("availableMoves.calc");
 		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
-		availableMoves.calc();
 		sw.stop();
 
 		AvailableMovesList movesList = availableMoves.movesList();
@@ -54,7 +53,6 @@ public class AvailableMovesEmptyBoard {
 
 		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
 		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
-		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
@@ -84,7 +82,6 @@ public class AvailableMovesEmptyBoard {
 
 		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
 		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
-		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
@@ -114,7 +111,6 @@ public class AvailableMovesEmptyBoard {
 
 		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
 		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
-		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
@@ -143,7 +139,6 @@ public class AvailableMovesEmptyBoard {
 
 		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
 		AvailableMoves availableMoves = new AvailableMoves(warCreatureBean, simpleBoard);
-		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());

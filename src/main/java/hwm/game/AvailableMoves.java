@@ -20,9 +20,11 @@ public class AvailableMoves {
 		this.speed = warCreatureBean.paramsFinal.speed;
 		this.simpleBoard = simpleBoard;
 		simpleBoard.cells.get(curY).set(curX, SimpleBoardCell.SELF_CREATURE);
+
+		this.calc();
 	}
 
-	public void calc() {
+	private void calc() {
 		//todo take into account creatures skills like: fly,isBig,teleport
 		recurCalc(curX, curY, speed);
 	}

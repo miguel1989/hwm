@@ -2,6 +2,7 @@ package hwm.game;
 
 import hwm.dto.BoardBean;
 import hwm.dto.WarCreatureBean;
+import hwm.util.JacksonJsonSerializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StopWatch;
 
@@ -25,7 +26,6 @@ public class AvailableMovesWithCreatures {
 
 		SimpleBoard simpleBoard = boardBean.toSimpleBoard();
 		AvailableMoves availableMoves = new AvailableMoves(creature1, simpleBoard);
-		availableMoves.calc();
 
 		AvailableMovesList movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
@@ -35,7 +35,6 @@ public class AvailableMovesWithCreatures {
 
 		simpleBoard = boardBean.toSimpleBoard();
 		availableMoves = new AvailableMoves(creature2, simpleBoard);
-		availableMoves.calc();
 		movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
@@ -44,7 +43,6 @@ public class AvailableMovesWithCreatures {
 
 		simpleBoard = boardBean.toSimpleBoard();
 		availableMoves = new AvailableMoves(creature3, simpleBoard);
-		availableMoves.calc();
 		movesList = availableMoves.movesList();
 		System.out.println(simpleBoard.toStr());
 		System.out.println(movesList);
@@ -67,7 +65,6 @@ public class AvailableMovesWithCreatures {
 		StopWatch sw = new StopWatch();
 		sw.start("availableMoves.calc");
 		AvailableMoves availableMoves = new AvailableMoves(creature1, simpleBoard);
-		availableMoves.calc();
 		sw.stop();
 
 		AvailableMovesList movesList = availableMoves.movesList();

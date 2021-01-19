@@ -17,7 +17,7 @@ public class SimplePendant {
 
 		artifact.getBaseParams().setAttack(0);
 		artifact.getBaseParams().setDefence(0);
-		artifact.getBaseParams().setInitiative(19);
+		artifact.getBaseParams().setInitiative(49);
 		artifact.getBaseParams().setLuck(0);
 		artifact.getBaseParams().setMorale(0);
 		artifact.getBaseParams().setMagicPower(0);

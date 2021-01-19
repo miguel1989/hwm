@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.creature.SimpleCreature;
 import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
+import hwm.game.AvailableMoves;
+import hwm.game.AvailableMovesList;
+import hwm.game.SimpleBoard;
 import hwm.util.BigDecimalUtils;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +36,8 @@ public class WarCreatureBean {
 
 	public BaseCreatureParamsBean paramsInitial = new BaseCreatureParamsBean();
 	public BaseCreatureParamsBean paramsFinal = new BaseCreatureParamsBean();
+
+	public AvailableMovesList movesList;
 
 	public WarCreatureBean(WarPlayerBean player, SimpleCreature simpleCreature, BaseParamsBean paramsFromPlayer) {
 		this.player = player;
@@ -124,5 +129,13 @@ public class WarCreatureBean {
 	public void afterTurn() {
 		//if (this.isTimeToMove())
 		this.currentATB = BigDecimalUtils.subtract(this.currentATB, MAX_ATB);
+	}
+
+	public void calcMovesList(SimpleBoard simpleBoard) {
+		if (this.isHero) {
+			return;
+		}
+		AvailableMoves availableMoves = new AvailableMoves(this, simpleBoard);
+		this.movesList = availableMoves.movesList();
 	}
 }

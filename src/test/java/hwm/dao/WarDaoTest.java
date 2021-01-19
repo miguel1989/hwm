@@ -98,15 +98,15 @@ public class WarDaoTest {
 		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.RED)));
 		assertTrue(page.getContent().get(0).teams().stream().anyMatch(it -> it.getType().equals(TeamType.BLUE)));
 
-		/////////////////////////// attempt to wait by hero
+		/////////////////////////// attempt to def by hero.peasant
 		lastHistoryEntry = warHistoryEntityDao.findTopByWarIdOrderByCreatedAtDesc(warEntity.id());
 		warBean = jacksonJsonSerializer.restoreWar(lastHistoryEntry.getJson());
 
-		boolean turnResult = warHuntService.playerTurn(warId, TurnBean.await(player1.id().toString(), warBean.nextCreaturesToMove.get(0).id.toString()));
+		boolean turnResult = warHuntService.playerTurn(warId, TurnBean.defence(player1.id().toString(), warBean.redTeam.players.get(0).creatures.get(1).id.toString()));
 		assertTrue(turnResult);
 
-		/////////////////////////// attempt to def by hero.peasant
-		turnResult = warHuntService.playerTurn(warId, TurnBean.defence(player1.id().toString(), warBean.redTeam.players.get(0).creatures.get(1).id.toString()));
+		/////////////////////////// attempt to wait by hero
+		turnResult = warHuntService.playerTurn(warId, TurnBean.await(player1.id().toString(), warBean.redTeam.players.get(0).creatures.get(0).id.toString()));
 		assertTrue(turnResult);
 
 		Collection<WarActionLogEntity> warActions = warActionLogEntityDao.findAllByWarIdOrderByCreatedAt(warEntity.id());
@@ -144,7 +144,7 @@ public class WarDaoTest {
 		assertEquals(1, playerBean.creatures.get(1).paramsFinal.maxDamage);
 		assertEquals(4, playerBean.creatures.get(1).paramsFinal.hp);
 		assertEquals(4, playerBean.creatures.get(1).paramsFinal.speed);
-		assertEquals("9.9", playerBean.creatures.get(1).paramsFinal.initiative.toString());
+		assertEquals("12.3", playerBean.creatures.get(1).paramsFinal.initiative.toString());
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.shots);
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.range);
 		assertEquals(0, playerBean.creatures.get(1).paramsFinal.mana);

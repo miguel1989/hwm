@@ -1,9 +1,13 @@
 package hwm.game;
 
+
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AvailableMovesList {
+	@Getter
 	private final List<Point> list = new ArrayList<>();
 
 	public void add(Point point) {
@@ -27,4 +31,5 @@ public class AvailableMovesList {
 				"list=" + list +
 				'}';
 	}
+
 }

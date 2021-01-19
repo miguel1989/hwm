@@ -135,7 +135,6 @@ public class WarHuntService {
 			//0. check that we can move there
 			SimpleBoard simpleBoard = warBean.boardBean.toSimpleBoard();
 			AvailableMoves availableMoves = new AvailableMoves(creatureForTurn, simpleBoard);
-			availableMoves.calc();
 			AvailableMovesList movesList = availableMoves.movesList();
 			if (!movesList.contains(new Point(turnBean.x, turnBean.y))) {
 				LOG.warn("Creature({}) with id = {} can not move there warId = {}",
