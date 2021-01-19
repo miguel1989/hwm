@@ -115,6 +115,11 @@ public class WarHuntService {
 				.findFirst().get();
 		//todo other checks for creature that it can make that turn
 
+		if (!tmpCreatureForTurn.turnList.contains(turnBean.type)) {
+			LOG.warn("CreatureId = {} can not make this turn({}), warId = {}",turnBean.creatureId, turnBean.type, warId);
+			return false;
+		}
+
 		if (TurnType.WAIT.equals(turnBean.type)) {
 			creatureForTurn.await();
 

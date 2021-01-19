@@ -50,7 +50,10 @@ public class WarBean {
 		while (nextCreaturesToMove == null || nextCreaturesToMove.isEmpty()) {
 			nextCreaturesToMove = atbTick();
 		}
-		nextCreaturesToMove.forEach(warCreature -> warCreature.calcMovesList(boardBean.toSimpleBoard()));
+		nextCreaturesToMove.forEach(warCreature -> {
+			warCreature.calcMovesList(boardBean.toSimpleBoard());
+			warCreature.calcTurnList();
+		});
 		lastActionTimeStamp = LocalDateTime.now();
 	}
 

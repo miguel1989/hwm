@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hwm.creature.SimpleCreature;
 import hwm.domain.BaseParams;
 import hwm.domain.PlayerEntity;
+import hwm.enums.TurnType;
 import hwm.game.AvailableMoves;
 import hwm.game.AvailableMovesList;
 import hwm.game.SimpleBoard;
@@ -12,6 +13,8 @@ import hwm.util.BigDecimalUtils;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -38,6 +41,7 @@ public class WarCreatureBean {
 	public BaseCreatureParamsBean paramsFinal = new BaseCreatureParamsBean();
 
 	public AvailableMovesList movesList;
+	public List<TurnType> turnList;
 
 	public WarCreatureBean(WarPlayerBean player, SimpleCreature simpleCreature, BaseParamsBean paramsFromPlayer) {
 		this.player = player;
@@ -137,5 +141,18 @@ public class WarCreatureBean {
 		}
 		AvailableMoves availableMoves = new AvailableMoves(this, simpleBoard);
 		this.movesList = availableMoves.movesList();
+	}
+
+	public void calcTurnList() {
+		turnList = new ArrayList<>();
+		turnList.add(TurnType.WAIT);
+		turnList.add(TurnType.DEFENCE);
+		if (this.isHero) {
+			turnList.add(TurnType.HERO_ATTACK);
+			return;
+		}
+
+		turnList.add(TurnType.ATTACK);
+		turnList.add(TurnType.MOVE);
 	}
 }
