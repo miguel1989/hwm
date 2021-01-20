@@ -4,18 +4,18 @@ import hwm.creatures.Peasant;
 import hwm.dao.*;
 import hwm.domain.*;
 import hwm.dto.*;
+import hwm.enums.ActionType;
 import hwm.enums.TurnType;
 import hwm.enums.WarType;
-import hwm.game.AvailableMoves;
-import hwm.game.AvailableMovesList;
-import hwm.game.Point;
-import hwm.game.SimpleBoard;
+import hwm.game.*;
 import hwm.util.JacksonJsonSerializer;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -149,7 +149,22 @@ public class WarHuntService {
 				return false;
 			}
 			//1. generate move path
+			NumberBoard numberBoard = warBean.boardBean.toNumberBoard();
+			MovePath movePath = new MovePath(
+					numberBoard,
+					new Point(creatureForTurn.x, creatureForTurn.y),
+					new Point(turnBean.x, turnBean.y)
+			);
+			List<Point> pathList = movePath.pathList();
 			//2. make a subAction to move one by one cell
+			List<WarActionLogEntity> subActions = new ArrayList<>(pathList.size());
+			Point from = new Point(creatureForTurn.x, creatureForTurn.y);
+			for (Point point : pathList) {
+				MoveBean moveBean = new MoveBean(from, point);
+				subActions.add(new WarActionLogEntity(warEntity.id(), ActionType.SUB_ACTION, jacksonJsonSerializer.toJson(moveBean)));
+				from = point;
+			}
+			warActionLogEntityDao.saveAll(subActions);
 		}
 
 		warBean.findNextCreaturesToMove();

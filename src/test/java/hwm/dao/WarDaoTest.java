@@ -121,6 +121,15 @@ public class WarDaoTest {
 						0
 				));
 		assertFalse(turnResult);
+
+		turnResult = warHuntService.playerTurn(warId,
+				TurnBean.move(
+						warBean.blueTeam.players.get(0).id,
+						warBean.blueTeam.players.get(0).creatures.get(0).id.toString(),
+						7,
+						0
+				));
+		assertTrue(turnResult);
 	}
 
 	private void checkPlayerBean(WarPlayerBean playerBean) {

@@ -1,8 +1,11 @@
 package hwm.domain;
 
+import hwm.enums.ActionType;
+import hwm.enums.ArtifactType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -22,8 +25,18 @@ public class WarActionLogEntity extends BaseEntity {
 	UUID warId;
 
 	@Getter
+	@Setter
+	@Column(name = "type")
+	ActionType type = ActionType.ACTION;
+
+	@Getter
 	@Column(name = "json")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	String json;
+
+	public WarActionLogEntity(UUID warId, String json) {
+		this.warId = warId;
+		this.json = json;
+	}
 }
