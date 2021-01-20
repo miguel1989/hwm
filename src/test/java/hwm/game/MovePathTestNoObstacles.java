@@ -63,6 +63,42 @@ public class MovePathTestNoObstacles {
 		assertEquals("Point{x=5, y=0}", pathList.get(4).toString());
 	}
 
+	@Test
+	public void moveDiagonallyFromTopRight() {
+		BoardBean boardBean = new BoardBean(6, 6);
+
+		WarCreatureBean warCreatureBean = createCreature(5, 0);
+		boardBean.addCreature(warCreatureBean);
+		NumberBoard numberBoard = boardBean.toNumberBoard();
+		MovePath movePath = new MovePath(numberBoard, new Point(5, 0), new Point(0, 5));
+		List<Point> pathList = movePath.pathList();
+		System.out.println(pathList);
+		assertEquals(5, pathList.size());
+		assertEquals("Point{x=4, y=1}", pathList.get(0).toString());
+		assertEquals("Point{x=3, y=2}", pathList.get(1).toString());
+		assertEquals("Point{x=2, y=3}", pathList.get(2).toString());
+		assertEquals("Point{x=1, y=4}", pathList.get(3).toString());
+		assertEquals("Point{x=0, y=5}", pathList.get(4).toString());
+	}
+
+	@Test
+	public void moveDiagonallyFromBottomRight() {
+		BoardBean boardBean = new BoardBean(6, 6);
+
+		WarCreatureBean warCreatureBean = createCreature(5, 5);
+		boardBean.addCreature(warCreatureBean);
+		NumberBoard numberBoard = boardBean.toNumberBoard();
+		MovePath movePath = new MovePath(numberBoard, new Point(5, 5), new Point(0, 0));
+		List<Point> pathList = movePath.pathList();
+		System.out.println(pathList);
+		assertEquals(5, pathList.size());
+		assertEquals("Point{x=4, y=4}", pathList.get(0).toString());
+		assertEquals("Point{x=3, y=3}", pathList.get(1).toString());
+		assertEquals("Point{x=2, y=2}", pathList.get(2).toString());
+		assertEquals("Point{x=1, y=1}", pathList.get(3).toString());
+		assertEquals("Point{x=0, y=0}", pathList.get(4).toString());
+	}
+
 	private WarCreatureBean createCreature(int x, int y) {
 		WarCreatureBean warCreatureBean = new WarCreatureBean();
 		warCreatureBean.x = x;
